@@ -19,14 +19,15 @@
     .row { display:flex; gap:10px; }
     .col { flex:1; }
     .badge { padding:2px 6px; border-radius:4px; font-size:11px; }
-    .status-attente-prod { background:#ffe9a3; }
-    .status-attente-appro { background:#ffd1d1; }
-    .status-en-prod { background:#a3d8ff; }
+    .status-attente_prod { background:#ffe9a3; }
+    .status-attente_appro { background:#ffd1d1; }
+    .status-en_prod { background:#a3d8ff; }
     .status-confirme { background:#b4f3b4; }
     .small { font-size:12px; color:#555; }
     button.action { padding:4px 8px; font-size:12px; margin-right:4px; }
   </style>
 </head>
+
 <body>
 <header>
   <h1>Gestion de Production & Inventaire</h1>
@@ -40,6 +41,14 @@
 </header>
 
 <main>
+
+  <!-- PROJETS -->
+  <section id="projets" class="section">
+    <h2>Projets</h2>
+    <p class="small">Liste des commandes en cours et leur statut.</p>
+    <div id="projets-table"></div>
+  </section>
+
   <!-- INVENTAIRE -->
   <section id="inventaire" class="section" style="display:none;">
     <h2>Inventaire</h2>
@@ -47,170 +56,18 @@
     <div id="inventaire-table"></div>
   </section>
 
-  bouton27L: { nom: "Bouton 27L", unite: "unité", quantite: 0 },
-  bouton22L: { nom: "Bouton 22L", unite: "unité", quantite: 0 },
+  <!-- MOUVEMENTS -->
+  <section id="mouvements" class="section" style="display:none;">
+    <h2>Mouvements</h2>
+    <div id="mouvements-table"></div>
+  </section>
 
-  pinBout: { nom: "Pin Bout", unite: "unité", quantite: 0 },
+  <!-- TABLEAU DE BORD -->
+  <section id="dashboard" class="section" style="display:none;">
+    <h2>Tableau de bord</h2>
+    <div id="dashboard-stats"></div>
+  </section>
 
-  rivet: { nom: "Rivet", unite: "unité", quantite: 0 },
-  pinRivet: { nom: "Pin Rivet", unite: "unité", quantite: 0 },
-
-  label: { nom: "Label", unite: "unité", quantite: 0 },
-  hangTag: { nom: "Hang Tag", unite: "unité", quantite: 0 },
-  flasher: { nom: "Flasher", unite: "unité", quantite: 0 },
-  patch: { nom: "Patch", unite: "unité", quantite: 0 }
-},
-styles: {
-  "CHORE-COAT": {
-    nom: "Chore Coat",
-    consommation: {
-      bouton27L: 8,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "DENIM-JACKET": {
-    nom: "Denim Jacket",
-    consommation: {
-      bouton27L: 9,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "ZIP-JACKET": {
-    nom: "Zip Jacket",
-    consommation: {
-      bouton27L: 2,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "OVER-SHIRT": {
-    nom: "Over Shirt",
-    consommation: {
-      bouton27L: 0,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "CLASSIC-JEAN-JACKET": {
-    nom: "Classic Jean Jacket",
-    consommation: {
-      bouton27L: 9,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "NEW-JEAN-JACKET": {
-    nom: "New Jean Jacket",
-    consommation: {
-      bouton27L: 9,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "ZIP-CHORE-COAT": {
-    nom: "Zip Chore Coat",
-    consommation: {
-      bouton27L: 2,
-      bouton22L: 0,
-      pinBout: 0,
-      rivet: 0,
-      pinRivet: 0,
-      label: 0,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "EASY-GUY": {
-    nom: "Easy Guy",
-    consommation: {
-      bouton27L: 1,
-      bouton22L: 4,
-      pinBout: 4,
-      rivet: 0,
-      pinRivet: 6,
-      label: 6,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "SUPER-GUY": {
-    nom: "Super Guy",
-    consommation: {
-      bouton27L: 1,
-      bouton22L: 3,
-      pinBout: 4,
-      rivet: 0,
-      pinRivet: 5,
-      label: 5,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  },
-
-  "TRUE-GUY": {
-    nom: "True Guy",
-    consommation: {
-      bouton27L: 1,
-      bouton22L: 4,
-      pinBout: 5,
-      rivet: 0,
-      pinRivet: 6,
-      label: 6,
-      hangTag: 1,
-      flasher: 1,
-      patch: 1
-    }
-  }
-},  
   <!-- NOUVELLE COMMANDE -->
   <section id="nouvelle-commande" class="section" style="display:none;">
     <h2>Nouvelle commande</h2>
@@ -246,22 +103,138 @@ styles: {
 
     <button id="cmd-save" style="margin-top:15px; padding:8px 12px;">Enregistrer la commande</button>
   </section>
-    
-      <!-- PROJETS -->
-  <section id="projets" class="section">
-    <h2>Projets</h2>
-    <p class="small">Liste des commandes en cours et leur statut.</p>
-    <div id="projets-table"></div>
-  </section>
-  
-    // Déduire inventaire lors du passage à "Confirmé"
-function deduireInventaire(projet) {
+
+</main>
+
+<script>
+/* -------------------------------------------------------
+   DONNÉES PAR DÉFAUT
+------------------------------------------------------- */
+const defaultData = {
+  inventaire: {
+    tissu: { nom: "Tissu", unite: "m", quantite: 0 },
+    bouton27L: { nom: "Bouton 27L", unite: "unité", quantite: 0 },
+    bouton22L: { nom: "Bouton 22L", unite: "unité", quantite: 0 },
+    pinBout: { nom: "Pin Bout", unite: "unité", quantite: 0 },
+    rivet: { nom: "Rivet", unite: "unité", quantite: 0 },
+    pinRivet: { nom: "Pin Rivet", unite: "unité", quantite: 0 },
+    label: { nom: "Label", unite: "unité", quantite: 0 },
+    hangTag: { nom: "Hang Tag", unite: "unité", quantite: 0 },
+    flasher: { nom: "Flasher", unite: "unité", quantite: 0 },
+    patch: { nom: "Patch", unite: "unité", quantite: 0 }
+  },
+
+  styles: {
+    "CHORE-COAT": { nom:"Chore Coat", consommation:{ bouton27L:8, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "DENIM-JACKET": { nom:"Denim Jacket", consommation:{ bouton27L:9, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "ZIP-JACKET": { nom:"Zip Jacket", consommation:{ bouton27L:2, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "OVER-SHIRT": { nom:"Over Shirt", consommation:{ bouton27L:0, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "CLASSIC-JEAN-JACKET": { nom:"Classic Jean Jacket", consommation:{ bouton27L:9, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "NEW-JEAN-JACKET": { nom:"New Jean Jacket", consommation:{ bouton27L:9, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "ZIP-CHORE-COAT": { nom:"Zip Chore Coat", consommation:{ bouton27L:2, bouton22L:0, pinBout:0, rivet:0, pinRivet:0, label:0, hangTag:1, flasher:1, patch:1 }},
+    "EASY-GUY": { nom:"Easy Guy", consommation:{ bouton27L:1, bouton22L:4, pinBout:4, rivet:0, pinRivet:6, label:6, hangTag:1, flasher:1, patch:1 }},
+    "SUPER-GUY": { nom:"Super Guy", consommation:{ bouton27L:1, bouton22L:3, pinBout:4, rivet:0, pinRivet:5, label:5, hangTag:1, flasher:1, patch:1 }},
+    "TRUE-GUY": { nom:"True Guy", consommation:{ bouton27L:1, bouton22L:4, pinBout:5, rivet:0, pinRivet:6, label:6, hangTag:1, flasher:1, patch:1 }}
+  },
+
+  projets: [],
+  mouvements: []
+};
+
+let data = JSON.parse(localStorage.getItem("appData")) || defaultData;
+function sauvegarder(){ localStorage.setItem("appData", JSON.stringify(data)); }
+
+/* -------------------------------------------------------
+   INVENTAIRE
+------------------------------------------------------- */
+function afficherInventaire(){
+  document.getElementById("inventaire-table").innerHTML = `
+    <table>
+      <tr><th>Article</th><th>Quantité</th><th>Unité</th></tr>
+      ${Object.keys(data.inventaire).map(k => `
+        <tr>
+          <td>${data.inventaire[k].nom}</td>
+          <td>${data.inventaire[k].quantite}</td>
+          <td>${data.inventaire[k].unite}</td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+/* -------------------------------------------------------
+   PROJETS
+------------------------------------------------------- */
+function afficherProjets(){
+  document.getElementById("projets-table").innerHTML = `
+    <table>
+      <tr>
+        <th>ID</th><th>Client</th><th>Style</th><th>Quantité</th><th>Tissu</th><th>Statut</th><th>Actions</th>
+      </tr>
+      ${data.projets.map(p => `
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.client}</td>
+          <td>${p.style}</td>
+          <td>${p.quantite}</td>
+          <td>${p.tissu} ${data.inventaire.tissu.unite}</td>
+          <td><span class="badge status-${p.statut.toLowerCase()}">${p.statut}</span></td>
+          <td>
+            <button class="action" onclick="changerStatut('${p.id}','ATTENTE_PROD')">Att. Prod</button>
+            <button class="action" onclick="changerStatut('${p.id}','ATTENTE_APPRO')">Att. Appro</button>
+            <button class="action" onclick="changerStatut('${p.id}','EN_PROD')">En Prod</button>
+            <button class="action" onclick="changerStatut('${p.id}','CONFIRME')">Confirmé</button>
+          </td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+/* -------------------------------------------------------
+   MOUVEMENTS
+------------------------------------------------------- */
+function afficherMouvements(){
+  document.getElementById("mouvements-table").innerHTML = `
+    <table>
+      <tr><th>Date</th><th>Projet</th><th>Style</th><th>Article</th><th>Variation</th><th>Commentaire</th></tr>
+      ${data.mouvements.map(m => `
+        <tr>
+          <td>${m.date}</td>
+          <td>${m.projet}</td>
+          <td>${m.style}</td>
+          <td>${m.article}</td>
+          <td>${m.variation} ${m.unite}</td>
+          <td>${m.commentaire}</td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+/* -------------------------------------------------------
+   DÉDUCTION AUTOMATIQUE
+------------------------------------------------------- */
+function enregistrerMouvement(m){
+  data.mouvements.push({
+    date: new Date().toLocaleString(),
+    projet: m.projet,
+    style: m.style,
+    article: m.article,
+    variation: m.variation,
+    unite: m.unite,
+    commentaire: m.commentaire
+  });
+  sauvegarder();
+  afficherMouvements();
+}
+
+function deduireInventaire(projet){
   const style = data.styles[projet.style];
   const qte = Number(projet.quantite);
 
-  // 1. Déduction du tissu (par commande)
   const tissuUtilise = Number(projet.tissu);
-  if (!isNaN(tissuUtilise) && tissuUtilise > 0) {
+  if(tissuUtilise > 0){
     const totalTissu = tissuUtilise * qte;
     data.inventaire.tissu.quantite -= totalTissu;
 
@@ -275,10 +248,9 @@ function deduireInventaire(projet) {
     });
   }
 
-  // 2. Déduction des articles du style
-  for (const article in style.consommation) {
+  for(const article in style.consommation){
     const conso = style.consommation[article];
-    if (conso > 0) {
+    if(conso > 0){
       const total = conso * qte;
       data.inventaire[article].quantite -= total;
 
@@ -294,28 +266,11 @@ function deduireInventaire(projet) {
   }
 }
 
-// Enregistrer un mouvement dans le journal
-function enregistrerMouvement(m) {
-  data.mouvements.push({
-    date: new Date().toLocaleString(),
-    projet: m.projet,
-    style: m.style,
-    article: m.article,
-    variation: m.variation,
-    unite: m.unite,
-    commentaire: m.commentaire
-  });
-  sauvegarder();
-  afficherMouvements();
-}
-
-// Changer le statut d’un projet
-function changerStatut(id, nouveauStatut) {
+function changerStatut(id, nouveauStatut){
   const projet = data.projets.find(p => p.id === id);
-  if (!projet) return;
+  if(!projet) return;
 
-  // Si on passe à "Confirmé", on déduit l’inventaire
-  if (nouveauStatut === "CONFIRME" && projet.statut !== "CONFIRME") {
+  if(nouveauStatut === "CONFIRME" && projet.statut !== "CONFIRME"){
     deduireInventaire(projet);
   }
 
@@ -323,235 +278,21 @@ function changerStatut(id, nouveauStatut) {
   sauvegarder();
   afficherProjets();
 }
-    // Déduire inventaire lors du passage à "Confirmé"
-function deduireInventaire(projet) {
-  const style = data.styles[projet.style];
-  const qte = Number(projet.quantite);
 
-  // 1. Déduction du tissu (par commande)
-  const tissuUtilise = Number(projet.tissu);
-  if (!isNaN(tissuUtilise) && tissuUtilise > 0) {
-    const totalTissu = tissuUtilise * qte;
-    data.inventaire.tissu.quantite -= totalTissu;
+/* -------------------------------------------------------
+   TABLEAU DE BORD
+------------------------------------------------------- */
+function afficherDashboard(){
+  const total = data.projets.length;
+  const attenteProd = data.projets.filter(p => p.statut==="ATTENTE_PROD").length;
+  const attenteAppro = data.projets.filter(p => p.statut==="ATTENTE_APPRO").length;
+  const enProd = data.projets.filter(p => p.statut==="EN_PROD").length;
+  const confirme = data.projets.filter(p => p.statut==="CONFIRME").length;
 
-    enregistrerMouvement({
-      projet: projet.id,
-      style: projet.style,
-      article: "Tissu",
-      variation: -totalTissu,
-      unite: data.inventaire.tissu.unite,
-      commentaire: "Consommation tissu pour projet confirmé"
-    });
-  }
-
-  // 2. Déduction des articles du style
-  for (const article in style.consommation) {
-    const conso = style.consommation[article];
-    if (conso > 0) {
-      const total = conso * qte;
-      data.inventaire[article].quantite -= total;
-
-      enregistrerMouvement({
-        projet: projet.id,
-        style: projet.style,
-        article: data.inventaire[article].nom,
-        variation: -total,
-        unite: data.inventaire[article].unite,
-        commentaire: "Consommation articles pour projet confirmé"
-      });
-    }
-  }
-}
-
-// Enregistrer un mouvement dans le journal
-function enregistrerMouvement(m) {
-  data.mouvements.push({
-    date: new Date().toLocaleString(),
-    projet: m.projet,
-    style: m.style,
-    article: m.article,
-    variation: m.variation,
-    unite: m.unite,
-    commentaire: m.commentaire
-  });
-  sauvegarder();
-  afficherMouvements();
-}
-
-// Changer le statut d’un projet
-function changerStatut(id, nouveauStatut) {
-  const projet = data.projets.find(p => p.id === id);
-  if (!projet) return;
-
-  // Si on passe à "Confirmé", on déduit l’inventaire
-  if (nouveauStatut === "CONFIRME" && projet.statut !== "CONFIRME") {
-    deduireInventaire(projet);
-  }
-
-  projet.statut = nouveauStatut;
-  sauvegarder();
-  afficherProjets();
-}
-    // Déduire inventaire lors du passage à "Confirmé"
-function deduireInventaire(projet) {
-  const style = data.styles[projet.style];
-  const qte = Number(projet.quantite);
-
-  // 1. Déduction du tissu (par commande)
-  const tissuUtilise = Number(projet.tissu);
-  if (!isNaN(tissuUtilise) && tissuUtilise > 0) {
-    const totalTissu = tissuUtilise * qte;
-    data.inventaire.tissu.quantite -= totalTissu;
-
-    enregistrerMouvement({
-      projet: projet.id,
-      style: projet.style,
-      article: "Tissu",
-      variation: -totalTissu,
-      unite: data.inventaire.tissu.unite,
-      commentaire: "Consommation tissu pour projet confirmé"
-    });
-  }
-
-  // 2. Déduction des articles du style
-  for (const article in style.consommation) {
-    const conso = style.consommation[article];
-    if (conso > 0) {
-      const total = conso * qte;
-      data.inventaire[article].quantite -= total;
-
-      enregistrerMouvement({
-        projet: projet.id,
-        style: projet.style,
-        article: data.inventaire[article].nom,
-        variation: -total,
-        unite: data.inventaire[article].unite,
-        commentaire: "Consommation articles pour projet confirmé"
-      });
-    }
-  }
-}
-
-// Enregistrer un mouvement dans le journal
-function enregistrerMouvement(m) {
-  data.mouvements.push({
-    date: new Date().toLocaleString(),
-    projet: m.projet,
-    style: m.style,
-    article: m.article,
-    variation: m.variation,
-    unite: m.unite,
-    commentaire: m.commentaire
-  });
-  sauvegarder();
-  afficherMouvements();
-}
-
-// Changer le statut d’un projet
-function changerStatut(id, nouveauStatut) {
-  const projet = data.projets.find(p => p.id === id);
-  if (!projet) return;
-
-  // Si on passe à "Confirmé", on déduit l’inventaire
-  if (nouveauStatut === "CONFIRME" && projet.statut !== "CONFIRME") {
-    deduireInventaire(projet);
-  }
-
-  projet.statut = nouveauStatut;
-  sauvegarder();
-  afficherProjets();
-}// Déduire inventaire lors du passage à "Confirmé"
-function deduireInventaire(projet) {
-  const style = data.styles[projet.style];
-  const qte = Number(projet.quantite);
-
-  // 1. Déduction du tissu (par commande)
-  const tissuUtilise = Number(projet.tissu);
-  if (!isNaN(tissuUtilise) && tissuUtilise > 0) {
-    const totalTissu = tissuUtilise * qte;
-    data.inventaire.tissu.quantite -= totalTissu;
-
-    enregistrerMouvement({
-      projet: projet.id,
-      style: projet.style,
-      article: "Tissu",
-      variation: -totalTissu,
-      unite: data.inventaire.tissu.unite,
-      commentaire: "Consommation tissu pour projet confirmé"
-    });
-  }
-
-  // 2. Déduction des articles du style
-  for (const article in style.consommation) {
-    const conso = style.consommation[article];
-    if (conso > 0) {
-      const total = conso * qte;
-      data.inventaire[article].quantite -= total;
-
-      enregistrerMouvement({
-        projet: projet.id,
-        style: projet.style,
-        article: data.inventaire[article].nom,
-        variation: -total,
-        unite: data.inventaire[article].unite,
-        commentaire: "Consommation articles pour projet confirmé"
-      });
-    }
-  }
-}
-
-// Enregistrer un mouvement dans le journal
-function enregistrerMouvement(m) {
-  data.mouvements.push({
-    date: new Date().toLocaleString(),
-    projet: m.projet,
-    style: m.style,
-    article: m.article,
-    variation: m.variation,
-    unite: m.unite,
-    commentaire: m.commentaire
-  });
-  sauvegarder();
-  afficherMouvements();
-}
-
-// Changer le statut d’un projet
-function changerStatut(id, nouveauStatut) {
-  const projet = data.projets.find(p => p.id === id);
-  if (!projet) return;
-
-  // Si on passe à "Confirmé", on déduit l’inventaire
-  if (nouveauStatut === "CONFIRME" && projet.statut !== "CONFIRME") {
-    deduireInventaire(projet);
-  }
-
-  projet.statut = nouveauStatut;
-  sauvegarder();
-  afficherProjets();
-}
-      <!-- TABLEAU DE BORD -->
-  <section id="dashboard" class="section" style="display:none;">
-    <h2>Tableau de bord</h2>
-
-    <div id="dashboard-content">
-      <p class="small">Résumé des projets, inventaire et consommation.</p>
-
-      <div id="dashboard-stats"></div>
-    </div>
-  </section>
-    function afficherDashboard() {
-  let totalProjets = data.projets.length;
-  let attenteProd = data.projets.filter(p => p.statut === "ATTENTE_PROD").length;
-  let attenteAppro = data.projets.filter(p => p.statut === "ATTENTE_APPRO").length;
-  let enProd = data.projets.filter(p => p.statut === "EN_PROD").length;
-  let confirme = data.projets.filter(p => p.statut === "CONFIRME").length;
-
-  let tissuRestant = data.inventaire.tissu.quantite;
-
-  let html = `
+  document.getElementById("dashboard-stats").innerHTML = `
     <h3>Projets</h3>
     <ul>
-      <li>Total : ${totalProjets}</li>
+      <li>Total : ${total}</li>
       <li>Attente production : ${attenteProd}</li>
       <li>Attente approvisionnement : ${attenteAppro}</li>
       <li>En production : ${enProd}</li>
@@ -559,53 +300,20 @@ function changerStatut(id, nouveauStatut) {
     </ul>
 
     <h3>Tissu</h3>
-    <p>Stock restant : ${tissuRestant} ${data.inventaire.tissu.unite}</p>
+    <p>Stock restant : ${data.inventaire.tissu.quantite} ${data.inventaire.tissu.unite}</p>
 
-    <h3>Inventaire (résumé)</h3>
+    <h3>Inventaire</h3>
     <ul>
       ${Object.keys(data.inventaire).map(k => `
         <li>${data.inventaire[k].nom} : ${data.inventaire[k].quantite} ${data.inventaire[k].unite}</li>
       `).join("")}
     </ul>
   `;
-
-  document.getElementById("dashboard-stats").innerHTML = html;
 }
-function afficherDashboard() {
-  let totalProjets = data.projets.length;
-  let attenteProd = data.projets.filter(p => p.statut === "ATTENTE_PROD").length;
-  let attenteAppro = data.projets.filter(p => p.statut === "ATTENTE_APPRO").length;
-  let enProd = data.projets.filter(p => p.statut === "EN_PROD").length;
-  let confirme = data.projets.filter(p => p.statut === "CONFIRME").length;
 
-  let tissuRestant = data.inventaire.tissu.quantite;
-
-  let html = `
-    <h3>Projets</h3>
-    <ul>
-      <li>Total : ${totalProjets}</li>
-      <li>Attente production : ${attenteProd}</li>
-      <li>Attente approvisionnement : ${attenteAppro}</li>
-      <li>En production : ${enProd}</li>
-      <li>Confirmés : ${confirme}</li>
-    </ul>
-
-    <h3>Tissu</h3>
-    <p>Stock restant : ${tissuRestant} ${data.inventaire.tissu.unite}</p>
-
-    <h3>Inventaire (résumé)</h3>
-    <ul>
-      ${Object.keys(data.inventaire).map(k => `
-        <li>${data.inventaire[k].nom} : ${data.inventaire[k].quantite} ${data.inventaire[k].unite}</li>
-      `).join("")}
-    </ul>
-  `;
-
-  document.getElementById("dashboard-stats").innerHTML = html;
-}
-    // ----------------------
-//  ENREGISTRER COMMANDE
-// ----------------------
+/* -------------------------------------------------------
+   ENREGISTRER COMMANDE
+------------------------------------------------------- */
 document.getElementById("cmd-save").onclick = () => {
   const client = document.getElementById("cmd-client").value;
   const style = document.getElementById("cmd-style").value;
@@ -613,7 +321,7 @@ document.getElementById("cmd-save").onclick = () => {
   const tissu = Number(document.getElementById("cmd-tissu").value);
   const commentaire = document.getElementById("cmd-commentaire").value;
 
-  if (!client || !style || quantite <= 0) {
+  if(!client || !style || quantite <= 0){
     alert("Veuillez remplir tous les champs obligatoires.");
     return;
   }
@@ -635,9 +343,9 @@ document.getElementById("cmd-save").onclick = () => {
   alert("Commande enregistrée !");
 };
 
-// ----------------------
-//  NAVIGATION ENTRE SECTIONS
-// ----------------------
+/* -------------------------------------------------------
+   NAVIGATION
+------------------------------------------------------- */
 document.querySelectorAll("nav button").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
@@ -646,33 +354,29 @@ document.querySelectorAll("nav button").forEach(btn => {
     document.querySelectorAll("main .section").forEach(sec => sec.style.display = "none");
     document.getElementById(btn.dataset.section).style.display = "block";
 
-    if (btn.dataset.section === "inventaire") afficherInventaire();
-    if (btn.dataset.section === "projets") afficherProjets();
-    if (btn.dataset.section === "mouvements") afficherMouvements();
-    if (btn.dataset.section === "dashboard") afficherDashboard();
+    if(btn.dataset.section === "inventaire") afficherInventaire();
+    if(btn.dataset.section === "projets") afficherProjets();
+    if(btn.dataset.section === "mouvements") afficherMouvements();
+    if(btn.dataset.section === "dashboard") afficherDashboard();
   };
 });
 
-// ----------------------
-//  INITIALISATION
-// ----------------------
-function init() {
-  // Remplir la liste des styles
+/* -------------------------------------------------------
+   INITIALISATION
+------------------------------------------------------- */
+function init(){
   const select = document.getElementById("cmd-style");
   select.innerHTML = Object.keys(data.styles)
     .map(k => `<option value="${k}">${data.styles[k].nom}</option>`)
     .join("");
 
-  // Mettre à jour le label tissu selon l’unité
   document.getElementById("label-tissu").innerText = `Tissu (${data.inventaire.tissu.unite})`;
 
   afficherProjets();
 }
 
 init();
+</script>
 
-</script>
-// ici tu colles TOUT le JavaScript des sections 3, 6, 7, 8
-</script>
 </body>
 </html>
