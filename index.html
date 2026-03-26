@@ -1,11 +1,49 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Gestion de production</title>
-  </head>
-  <body>
-    <h1>Bienvenue sur mon application</h1>
-    <p>Ce site gère la production et l'inventaire.</p>
-  </body>
-</html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestion Production & Inventaire</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background:#f5f5f5; }
+    header { background:#f13b70; color:#fff; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; }
+    h1 { font-size:20px; margin:0; }
+    nav button { margin-right:8px; padding:6px 10px; border:none; border-radius:4px; cursor:pointer; }
+    nav button.active { background:#f13b70; color:#fff; }
+    main { padding:20px; }
+    .section { background:#fff; border-radius:6px; padding:15px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #ddd; padding:6px 8px; font-size:13px; }
+    th { background:#f0f0f0; }
+    label { display:block; margin-top:8px; font-size:13px; }
+    input, select { width:100%; padding:6px; margin-top:3px; box-sizing:border-box; }
+    .row { display:flex; gap:10px; }
+    .col { flex:1; }
+    .badge { padding:2px 6px; border-radius:4px; font-size:11px; }
+    .status-attente-prod { background:#ffe9a3; }
+    .status-attente-appro { background:#ffd1d1; }
+    .status-en-prod { background:#a3d8ff; }
+    .status-confirme { background:#b4f3b4; }
+    .small { font-size:12px; color:#555; }
+    button.action { padding:4px 8px; font-size:12px; margin-right:4px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Gestion de Production & Inventaire</h1>
+  <nav>
+    <button data-section="projets" class="active">Projets</button>
+    <button data-section="inventaire">Inventaire</button>
+    <button data-section="mouvements">Mouvements</button>
+    <button data-section="dashboard">Tableau de bord</button>
+    <button data-section="nouvelle-commande">Nouvelle commande</button>
+  </nav>
+</header>
+
+<main>
+  <!-- INVENTAIRE -->
+  <section id="inventaire" class="section" style="display:none;">
+    <h2>Inventaire</h2>
+    <p class="small">Inventaire des articles, incluant tissu (m).</p>
+    <div id="inventaire-table"></div>
+  </section>
+  
