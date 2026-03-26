@@ -46,8 +46,6 @@
     <p class="small">Inventaire des articles, incluant tissu (m).</p>
     <div id="inventaire-table"></div>
   </section>
-  inventaire: {
-  tissu: { nom: "Tissu", unite: "m", quantite: 0 },
 
   bouton27L: { nom: "Bouton 27L", unite: "unité", quantite: 0 },
   bouton22L: { nom: "Bouton 22L", unite: "unité", quantite: 0 },
@@ -249,14 +247,13 @@ styles: {
     <button id="cmd-save" style="margin-top:15px; padding:8px 12px;">Enregistrer la commande</button>
   </section>
     
-  SECTION 5 — Gestion des projets + statuts
       <!-- PROJETS -->
   <section id="projets" class="section">
     <h2>Projets</h2>
     <p class="small">Liste des commandes en cours et leur statut.</p>
     <div id="projets-table"></div>
   </section>
-  SECTION 6 — Déduction automatique du tissu + mouvements
+  
     // Déduire inventaire lors du passage à "Confirmé"
 function deduireInventaire(projet) {
   const style = data.styles[projet.style];
@@ -674,6 +671,8 @@ function init() {
 
 init();
 
+</script>
+// ici tu colles TOUT le JavaScript des sections 3, 6, 7, 8
 </script>
 </body>
 </html>
