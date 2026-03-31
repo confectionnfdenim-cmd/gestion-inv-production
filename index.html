@@ -1,1783 +1,275 @@
-<!DOCTYPE html>
+<nav class="menu">
+  <button data-tab="tissu">Tissu</button>
+  <button data-tab="patch">Patch</button>
+  <button data-tab="flasher">Flasher</button>
+  <button data-tab="bouton">Bouton</button>
+  <button data-tab="rivet">Rivet</button>
+  <button data-tab="etiquette">Étiquette</button>
+  <button data-tab="projets">Projets</button>
+  <button data-tab="modeles">Modèles</button>
+  <button data-tab="mouvements">Mouvements</button>
+</nav>
+
+<div id="content">
+  <section id="tissu" class="tab"></section>
+  <section id="patch" class="tab"></section>
+  <section id="flasher" class="tab"></section>
+  <section id="bouton" class="tab"></section>
+  <section id="rivet" class="tab"></section>
+  <section id="etiquette" class="tab"></section>
+  <section id="projets" class="tab"></section>
+  <section id="modeles" class="tab"></section>
+  <section id="mouvements" class="tab"></section>
+</div>
+
+<table class="inv-table">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Nom / Remarque</th>
+      <th>Couleur / Genre</th>
+      <th>Quantité</th>
+      <th>Unité</th>
+      <th>Actif</th>
+      <th>Stock min</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="tbody-tissu"></tbody>
+</table>
+
+function getRowColor(qte, min) {
+  if (qte <= min) return "stock-low"
+  if (qte <= min * 1.5) return "stock-warning"
+  return "stock-ok"
+}
+
+    function editItem(type, code) { /* ouvre un formulaire */ }
+function deactivateItem(type, code) { /* passe actif = false */ }
+function addItem(type) { /* formulaire d’ajout */ }
+
+    mouvements.push({
+  date: new Date().toISOString(),
+  type: "sortie",
+  article: code,
+  quantite: qte,
+  raison: "Projet " + projetId,
+  commentaire: ""
+})
+
+    <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>ERP Textile – ConfectionNFD</title>
-  <style>
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { margin: 0; background: #0f172a; color: #e5e7eb; }
-    header { padding: 16px 24px; background: #020617; border-bottom: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { margin: 0; font-size: 20px; }
-    header span { font-size: 12px; color: #9ca3af; }
-    main { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 56px); }
-    nav { border-right: 1px solid #1f2937; padding: 16px 12px; background: #020617; }
-    nav h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; margin: 0 0 8px; }
-    nav button { width: 100%; text-align: left; padding: 8px 10px; margin-bottom: 4px; border-radius: 6px; border: none; background: transparent; color: #e5e7eb; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-    nav button.active { background: #1d4ed8; }
-    nav button span.badge { font-size: 11px; padding: 2px 6px; border-radius: 999px; background: #111827; color: #9ca3af; }
-    section { padding: 16px 20px; overflow: auto; }
-    h3 { margin-top: 0; font-size: 16px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-    .card { background: #020617; border-radius: 10px; border: 1px solid #1f2937; padding: 12px 14px; }
-    .card h4 { margin: 0 0 8px; font-size: 14px; }
-    .card small { color: #9ca3af; font-size: 11px; }
-    label { display: block; font-size: 12px; margin-bottom: 2px; color: #9ca3af; }
-    input, select, textarea { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #374151; background: #020617; color: #e5e7eb; font-size: 13px; }
-    textarea { resize: vertical; min-height: 60px; }
-    .row { display: flex; gap: 8px; }
-    .row > div { flex: 1; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-    th, td { padding: 6px 8px; border-bottom: 1px solid #111827; text-align: left; }
-    th { background: #020617; position: sticky; top: 0; z-index: 1; }
-    tr:nth-child(even) td { background: #020617; }
-    .status-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
-    .status-attente { background: #111827; color: #e5e7eb; }
-    .status-taillage { background: #1d4ed8; color: #e5e7eb; }
-    .status-production { background: #f97316; color: #111827; }
-    .status-confirme { background: #22c55e; color: #052e16; }
-    .status-bloque { background: #b91c1c; color: #fee2e2; }
-    .tag { display: inline-flex; padding: 2px 6px; border-radius: 999px; font-size: 11px; background: #111827; color: #9ca3af; margin-right: 4px; }
-    button.primary { padding: 6px 10px; border-radius: 6px; border: none; background: #22c55e; color: #052e16; font-size: 13px; cursor: pointer; }
-    button.secondary { padding: 6px 10px; border-radius: 6px; border: 1px solid #374151; background: #020617; color: #e5e7eb; font-size: 13px; cursor: pointer; }
-    button.danger { padding: 4px 8px; border-radius: 6px; border: 1px solid #7f1d1d; background: #111827; color: #fecaca; font-size: 11px; cursor: pointer; }
-    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
-    .toolbar-right { display: flex; gap: 6px; align-items: center; }
-    .pill { padding: 2px 8px; border-radius: 999px; font-size: 11px; background: #111827; color: #9ca3af; }
-    .muted { color: #6b7280; font-size: 12px; }
-    .highlight { color: #22c55e; }
-    .danger-text { color: #f97316; }
-    .scroll { max-height: 360px; overflow: auto; border-radius: 8px; border: 1px solid #111827; }
-    .small { font-size: 11px; }
-  </style>
+<meta charset="UTF-8">
+<title>Inventaire N&F</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #F7F7F7;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Menu */
+    nav {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        background: #FFFFFF;
+        border-bottom: 1px solid #DDD;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    nav button {
+        padding: 10px 18px;
+        border: none;
+        background: #4A90E2;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+    nav button:hover {
+        background: #357ABD;
+    }
+
+    /* Sections */
+    .tab {
+        display: none;
+        padding: 20px;
+    }
+
+    /* Cartes */
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 15px;
+    }
+
+    .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        border-left: 10px solid #4A90E2;
+    }
+
+    .card h3 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+    }
+
+    .info {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    /* Couleurs de stock */
+    .stock-ok { border-left-color: #4CAF50; background: #DFF6DD; }
+    .stock-warning { border-left-color: #FFC107; background: #FFF4CE; }
+    .stock-low { border-left-color: #F44336; background: #FDE7E9; }
+
+    /* Boutons */
+    .actions button {
+        margin-right: 5px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .edit { background: #4A90E2; color: white; }
+    .inactive { background: #999; color: white; }
+</style>
 </head>
+
 <body>
-  <header>
-    <div>
-      <h1>ERP Textile – ConfectionNFD</h1>
-      <span>Inventaire · Projets · Mouvements · Accessoires</span>
-    </div>
-    <div class="muted small">
-      Données locales (navigateur) – aucune base externe
-    </div>
-  </header>
 
-  <main>
-    <nav>
-      <h2>Navigation</h2>
-      <button data-view="dashboard" class="active">
-        Tableau de bord
-      </button>
-      <button data-view="projets">
-        Projets
-        <span class="badge" id="badge-projets">0</span>
-      </button>
-      <button data-view="inventaire">
-        Inventaire
-      </button>
-      <button data-view="mouvements">
-        Mouvements
-      </button>
-      <button data-view="config">
-        Config / Ajout d’articles
-      </button>
-    </nav>
+<nav>
+    <button data-tab="tissu">Tissu</button>
+    <button data-tab="patch">Patch</button>
+    <button data-tab="flasher">Flasher</button>
+    <button data-tab="bouton">Bouton</button>
+    <button data-tab="rivet">Rivet</button>
+    <button data-tab="etiquette">Étiquette</button>
+    <button data-tab="projets">Projets</button>
+    <button data-tab="modeles">Modèles</button>
+    <button data-tab="mouvements">Mouvements</button>
+</nav>
 
-    <section id="view-dashboard">
-      <h3>Tableau de bord</h3>
-      <div class="grid">
-        <div class="card">
-          <h4>Projets par statut</h4>
-          <div id="kpi-projets"></div>
-        </div>
-        <div class="card">
-          <h4>Alertes inventaire</h4>
-          <div id="kpi-alertes"></div>
-        </div>
-        <div class="card">
-          <h4>Derniers mouvements</h4>
-          <div id="kpi-mouvements"></div>
-        </div>
-      </div>
+<div id="content">
+
+    <!-- Exemple : TISSU -->
+    <section id="tissu" class="tab">
+        <h2>Tissu</h2>
+        <div class="card-container" id="cards-tissu"></div>
     </section>
 
-    <section id="view-projets" style="display:none;">
-      <div class="toolbar">
-        <h3>Projets</h3>
-        <button class="primary" id="btn-nouveau-projet">Nouveau projet</button>
-      </div>
-
-      <div class="card" id="form-projet-card" style="display:none; margin-bottom:10px;">
-        <h4>Nouveau projet</h4>
-        <div class="grid">
-          <div>
-            <label>Code projet</label>
-            <input id="projet-code" />
-          </div>
-          <div>
-            <label>Client / Description</label>
-            <input id="projet-client" />
-          </div>
-          <div>
-            <label>Style / Modèle</label>
-            <input id="projet-style" />
-          </div>
-          <div>
-            <label>Quantité (pièces)</label>
-            <input id="projet-quantite" type="number" min="1" />
-          </div>
-        </div>
-        <div class="grid" style="margin-top:8px;">
-          <div>
-            <label>Tissu principal (code)</label>
-            <input id="projet-tissu" placeholder="Ex: KV-0286 (2360-057)" />
-          </div>
-          <div>
-            <label>Patch (code)</label>
-            <input id="projet-patch" placeholder="Ex: LP0001-ET" />
-          </div>
-          <div>
-            <label>Flasher (code)</label>
-            <input id="projet-flasher" placeholder="Ex: PF0301" />
-          </div>
-          <div>
-            <label>Bouton / Rivet (codes)</label>
-            <input id="projet-accessoires" placeholder="Ex: BT01, RV01" />
-          </div>
-        </div>
-        <div style="margin-top:8px;">
-          <label>Notes</label>
-          <textarea id="projet-notes"></textarea>
-        </div>
-        <div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">
-          <button class="secondary" id="projet-annuler">Annuler</button>
-          <button class="primary" id="projet-enregistrer">Enregistrer le projet</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="toolbar">
-          <span class="muted">Liste des projets</span>
-          <div class="toolbar-right small">
-            <span class="pill">Attente</span>
-            <span class="pill">Taillage</span>
-            <span class="pill">Production</span>
-            <span class="pill">Confirmé</span>
-            <span class="pill danger-text">Bloqué</span>
-          </div>
-        </div>
-        <div class="scroll">
-          <table id="table-projets">
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Client / Style</th>
-                <th>Qté</th>
-                <th>Tissu</th>
-                <th>Patch</th>
-                <th>Flasher</th>
-                <th>Statut</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <!-- PATCH -->
+    <section id="patch" class="tab">
+        <h2>Patch</h2>
+        <div class="card-container" id="cards-patch"></div>
     </section>
 
-    <section id="view-inventaire" style="display:none;">
-      <div class="toolbar">
-        <h3>Inventaire</h3>
-        <div class="toolbar-right">
-          <select id="inventaire-categorie">
-            <option value="tissus">Tissus</option>
-            <option value="patchs">Patchs</option>
-            <option value="flashers">Flashers</option>
-            <option value="boutons">Boutons</option>
-            <option value="rivets">Rivets</option>
-            <option value="etiquettes">Étiquettes</option>
-          </select>
-          <input id="inventaire-filtre" placeholder="Filtrer par code ou nom" />
-        </div>
-      </div>
-      <div class="card">
-        <div class="scroll">
-          <table id="table-inventaire">
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Nom</th>
-                <th>Couleur</th>
-                <th>Quantité</th>
-                <th>Unité</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <!-- FLASHER -->
+    <section id="flasher" class="tab">
+        <h2>Flasher</h2>
+        <div class="card-container" id="cards-flasher"></div>
     </section>
 
-    <section id="view-mouvements" style="display:none;">
-      <div class="toolbar">
-        <h3>Mouvements</h3>
-        <span class="muted small">Déductions automatiques + ajustements manuels</span>
-      </div>
-      <div class="card">
-        <div class="scroll">
-          <table id="table-mouvements">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Référence</th>
-                <th>Catégorie</th>
-                <th>Quantité</th>
-                <th>Projet</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <!-- BOUTON -->
+    <section id="bouton" class="tab">
+        <h2>Bouton</h2>
+        <div class="card-container" id="cards-bouton"></div>
     </section>
 
-    <section id="view-config" style="display:none;">
-      <h3>Configuration & Ajout d’articles</h3>
-      <div class="grid">
-        <div class="card">
-          <h4>Ajouter un article d’inventaire</h4>
-          <div class="grid">
-            <div>
-              <label>Catégorie</label>
-              <select id="cfg-cat">
-                <option value="tissus">Tissu</option>
-                <option value="patchs">Patch</option>
-                <option value="flashers">Flasher</option>
-                <option value="boutons">Bouton</option>
-                <option value="rivets">Rivet</option>
-                <option value="etiquettes">Étiquette</option>
-              </select>
-            </div>
-            <div>
-              <label>Code</label>
-              <input id="cfg-code" />
-            </div>
-            <div>
-              <label>Nom</label>
-              <input id="cfg-nom" />
-            </div>
-            <div>
-              <label>Couleur (optionnel)</label>
-              <input id="cfg-couleur" />
-            </div>
-            <div>
-              <label>Quantité</label>
-              <input id="cfg-quantite" type="number" />
-            </div>
-            <div>
-              <label>Unité</label>
-              <input id="cfg-unite" value="unité" />
-            </div>
-          </div>
-          <div style="margin-top:8px; text-align:right;">
-            <button class="primary" id="cfg-ajouter">Ajouter / Mettre à jour</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h4>Sauvegarde locale</h4>
-          <p class="small muted">
-            Les données (projets, inventaire, mouvements) sont sauvegardées dans ton navigateur (localStorage).
-          </p>
-          <div style="display:flex; gap:8px;">
-            <button class="secondary" id="btn-export">Exporter (JSON)</button>
-            <button class="danger" id="btn-reset">Réinitialiser tout</button>
-          </div>
-        </div>
-      </div>
+    <!-- RIVET -->
+    <section id="rivet" class="tab">
+        <h2>Rivet</h2>
+        <div class="card-container" id="cards-rivet"></div>
     </section>
-  </main>
-    <script>
-    const defaultData = {
-      inventaire: {
-        tissus: {
-          "0570-ST-SSK": { nom: "0570-ST-SSK", quantite: 755, unite: "m" },
-          "0571-ST-SSK": { nom: "0571-ST-SSK", quantite: 590, unite: "m" },
-          "B737-BK": { nom: "B737-BK", quantite: 4559, unite: "m" },
-          "KV-0286 (2360-057)": { nom: "KV-0286 (2360-057)", quantite: 872, unite: "m" },
-          "KV-0135-UF": { nom: "KV-0135-UF", quantite: 1215, unite: "m" }
-          // ➜ À COMPLÉTER avec toutes tes autres références tissu
-        },
-        patchs: {
-          "LP0001-ET": { couleur: "ENGLISH TAN", nom: "N&F MEN'S PANTS - PATCH", quantite: 2468, unite: "unité" },
-          "LP0001-BL": { couleur: "BLACK", nom: "N&F MEN'S PANTS - PATCH", quantite: -614, unite: "unité" },
-          "LP0002-DB": { couleur: "WOMEN - DARK BROWN", nom: "N&F WOMEN'S PANTS - PATCH", quantite: 1647, unite: "unité" },
-          "LP0092": { couleur: "RAGING BULL LEATHER", nom: "N&F MEN'S PANTS - PATCH", quantite: 2336, unite: "unité" },
-          "LP213": { couleur: "HORWEEN CAVALIER (Blue Ink Horween)", nom: "N&F MEN'S PANTS - PATCH", quantite: 1834, unite: "unité" }
-          // ➜ À COMPLÉTER avec toutes tes autres références patch
-        },
-        flashers: {
-          "PF0301": { nom: "BLACK POWER STRETCH", quantite: 2464, unite: "unité" },
-          "PF0333": { nom: "STRETCH SELVEDGE", quantite: 1278, unite: "unité" },
-          "PF0555": { nom: "DEEP INDIGO SELVEDGE", quantite: 3212, unite: "unité" },
-          "PF3737": { nom: "SOLID BLACK SELVEDGE", quantite: 2457, unite: "unité" },
-          "PF9040": { nom: "BLACK COBRA STRETCH SELVEDGE", quantite: 1182, unite: "unité" }
-          // ➜ À COMPLÉTER avec toutes tes autres références flasher
-        },
-        boutons: {
-          "BT01": { nom: "27L TIN N&F BUTTON", couleur: "TIN", quantite: 28954, unite: "unité" },
-          "BT03": { nom: "27L Black N&F Button", couleur: "BLACK", quantite: 22363.36, unite: "unité" },
-          "BT05": { nom: "27L antique copper N&F Button", couleur: "ANTIQUE COPPER", quantite: 917, unite: "unité" },
-          "BT02": { nom: "22L TIN N&F BUTTON", couleur: "TIN", quantite: 57022, unite: "unité" },
-          "BT04": { nom: "22L Black N&F Button", couleur: "BLACK", quantite: 17921, unite: "unité" }
-          // ➜ À COMPLÉTER avec toutes tes autres références bouton
-        },
-        rivets: {
-          "RVP01": { nom: "PIN RIVET TIN RT50", couleur: "TIN", quantite: 67393, unite: "unité" },
-          "RVP02": { nom: "Pin Rivet Black FA9R361359Y", couleur: "BLACK", quantite: 45239, unite: "unité" },
-          "RVP03": { nom: "PIN RIVET ANTIQUE COPPER", couleur: "ANTIQUE COPPER", quantite: 23579, unite: "unité" },
-          "RV01": { nom: "RIVET TIN RT205", couleur: "TIN", quantite: 55427, unite: "unité" },
-          "RV02": { nom: "RIVET Black RT201 F27", couleur: "BLACK", quantite: 87259, unite: "unité" }
-          // ➜ À COMPLÉTER avec toutes tes autres références rivet
-        },
-        etiquettes: {
-          "WL01": { nom: "Woven Label N&F", couleur: "", quantite: 18600, unite: "unité" },
-          "WL75": { nom: "Multicolor Shirt Woven Label", couleur: "", quantite: 813, unite: "unité" },
-          "HT14": { nom: "Generic Naked & Famous hang tag", couleur: "", quantite: 3081, unite: "unité" },
-          "HT28": { nom: "Denim Jacket - Naked & Famous hang tag", couleur: "", quantite: 1961, unite: "unité" },
-          "HT25": { nom: "Kimono Shirt - Naked & Famous hang tag", couleur: "", quantite: -187, unite: "unité" }
-          // ➜ À COMPLÉTER avec toutes tes autres références étiquette
-        }
-      },
-      projets: [],
-      mouvements: []
+
+    <!-- ÉTIQUETTE -->
+    <section id="etiquette" class="tab">
+        <h2>Étiquette</h2>
+        <div class="card-container" id="cards-etiquette"></div>
+    </section>
+
+    <!-- PROJETS -->
+    <section id="projets" class="tab">
+        <h2>Projets</h2>
+        <p>Formulaire + liste des projets à venir ici.</p>
+    </section>
+
+    <!-- MODÈLES -->
+    <section id="modeles" class="tab">
+        <h2>Modèles</h2>
+        <p>Gestion des modèles (Super Guy, Easy Guy, Arrow, etc.)</p>
+    </section>
+
+    <!-- MOUVEMENTS -->
+    <section id="mouvements" class="tab">
+        <h2>Mouvements</h2>
+        <p>Historique des entrées / sorties / corrections.</p>
+    </section>
+
+</div>
+
+<script>
+    // Navigation
+    const buttons = document.querySelectorAll("nav button");
+    const tabs = document.querySelectorAll(".tab");
+
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            tabs.forEach(t => t.style.display = "none");
+            document.getElementById(btn.dataset.tab).style.display = "block";
+        });
+    });
+
+    // Affiche la première section
+    document.getElementById("tissu").style.display = "block";
+
+    // Exemple de données (tu vas entrer les tiennes manuellement)
+    const inventaire = {
+        tissu: [
+            { code: "KV-2200", remarque: "Denim bleu", quantite: 450, unite: "m", min: 200, actif: true },
+            { code: "NF737", remarque: "Selvedge noir", quantite: 80, unite: "m", min: 150, actif: true }
+        ]
     };
 
-    const STORAGE_KEY = "erp_textile_confectionnfd_v1";
-  </script>
-    <script>
-    function loadData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return structuredClone(defaultData);
-        const parsed = JSON.parse(raw);
-        return {
-          inventaire: parsed.inventaire || structuredClone(defaultData.inventaire),
-          projets: parsed.projets || [],
-          mouvements: parsed.mouvements || []
-        };
-      } catch {
-        return structuredClone(defaultData);
-      }
+    function getColorClass(q, min) {
+        if (q <= min) return "stock-low";
+        if (q <= min * 1.5) return "stock-warning";
+        return "stock-ok";
     }
 
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      renderAll();
-    }
+    function renderCards(type) {
+        const container = document.getElementById("cards-" + type);
+        container.innerHTML = "";
 
-    let data = loadData();
+        inventaire[type].forEach(item => {
+            const div = document.createElement("div");
+            div.className = "card " + getColorClass(item.quantite, item.min);
 
-    function statusClass(statut) {
-      switch (statut) {
-        case "attente": return "status-pill status-attente";
-        case "taillage": return "status-pill status-taillage";
-        case "production": return "status-pill status-production";
-        case "confirme": return "status-pill status-confirme";
-        case "bloque": return "status-pill status-bloque";
-        default: return "status-pill status-attente";
-      }
-    }
+            div.innerHTML = `
+                <h3>${item.code}</h3>
+                <div class="info"><strong>Remarque :</strong> ${item.remarque}</div>
+                <div class="info"><strong>Quantité :</strong> ${item.quantite} ${item.unite}</div>
+                <div class="info"><strong>Stock min :</strong> ${item.min}</div>
+                <div class="info"><strong>Actif :</strong> ${item.actif ? "Oui" : "Non"}</div>
 
-    function statusLabel(statut) {
-      switch (statut) {
-        case "attente": return "En attente";
-        case "taillage": return "Taillage";
-        case "production": return "Production";
-        case "confirme": return "Confirmé";
-        case "bloque": return "Bloqué";
-        default: return statut;
-      }
-    }
-
-    function renderNav() {
-      const count = data.projets.length;
-      document.getElementById("badge-projets").textContent = count;
-    }
-
-    function renderDashboard() {
-      const kpiProjets = document.getElementById("kpi-projets");
-      const kpiAlertes = document.getElementById("kpi-alertes");
-      const kpiMouvements = document.getElementById("kpi-mouvements");
-
-      const stats = { attente: 0, taillage: 0, production: 0, confirme: 0, bloque: 0 };
-      for (const p of data.projets) {
-        stats[p.statut || "attente"] = (stats[p.statut || "attente"] || 0) + 1;
-      }
-
-      kpiProjets.innerHTML = `
-        <div class="small">
-          <div><span class="status-pill status-attente"></span> ${stats.attente} en attente</div>
-          <div><span class="status-pill status-taillage"></span> ${stats.taillage} en taillage</div>
-          <div><span class="status-pill status-production"></span> ${stats.production} en production</div>
-          <div><span class="status-pill status-confirme"></span> ${stats.confirme} confirmés</div>
-          <div><span class="status-pill status-bloque"></span> ${stats.bloque} bloqués</div>
-        </div>
-      `;
-
-      const alertes = [];
-      for (const [cat, refs] of Object.entries(data.inventaire)) {
-        for (const [code, item] of Object.entries(refs)) {
-          if (item.quantite < 0) {
-            alertes.push(`<div class="small danger-text">[${cat}] ${code} – ${item.nom || ""} (${item.quantite} ${item.unite})</div>`);
-          }
-        }
-      }
-      kpiAlertes.innerHTML = alertes.length ? alertes.join("") : `<div class="small muted">Aucune alerte critique.</div>`;
-
-      const derniers = [...data.mouvements].slice(-5).reverse();
-      if (!derniers.length) {
-        kpiMouvements.innerHTML = `<div class="small muted">Aucun mouvement enregistré.</div>`;
-      } else {
-        kpiMouvements.innerHTML = derniers.map(m => `
-          <div class="small">
-            <span class="muted">${m.date}</span> – <span class="tag">${m.type}</span>
-            <strong>${m.reference}</strong> (${m.categorie}) : ${m.quantite} (${m.projet || "—"})
-          </div>
-        `).join("");
-      }
-    }
-
-    function renderProjets() {
-      const tbody = document.querySelector("#table-projets tbody");
-      tbody.innerHTML = "";
-      for (const p of data.projets) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${p.code}</td>
-          <td>
-            <div class="small"><strong>${p.client || ""}</strong></div>
-            <div class="small muted">${p.style || ""}</div>
-          </td>
-          <td>${p.quantite}</td>
-          <td>${p.tissu || ""}</td>
-          <td>${p.patch || ""}</td>
-          <td>${p.flasher || ""}</td>
-          <td><span class="${statusClass(p.statut)}">${statusLabel(p.statut)}</span></td>
-          <td>
-            <button class="secondary small" data-action="cycle" data-code="${p.code}">Statut +</button>
-            <button class="danger" data-action="delete" data-code="${p.code}">Supprimer</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function renderInventaire() {
-      const cat = document.getElementById("inventaire-categorie").value;
-      const filtre = document.getElementById("inventaire-filtre").value.toLowerCase();
-      const tbody = document.querySelector("#table-inventaire tbody");
-      tbody.innerHTML = "";
-      const refs = data.inventaire[cat] || {};
-      for (const [code, item] of Object.entries(refs)) {
-        const texte = (code + " " + (item.nom || "") + " " + (item.couleur || "")).toLowerCase();
-        if (filtre && !texte.includes(filtre)) continue;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${code}</td>
-          <td>${item.nom || ""}</td>
-          <td>${item.couleur || ""}</td>
-          <td class="${item.quantite < 0 ? "danger-text" : ""}">${item.quantite}</td>
-          <td>${item.unite || ""}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function renderMouvements() {
-      const tbody = document.querySelector("#table-mouvements tbody");
-      tbody.innerHTML = "";
-      for (const m of data.mouvements.slice().reverse()) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${m.date}</td>
-          <td>${m.type}</td>
-          <td>${m.reference}</td>
-          <td>${m.categorie}</td>
-          <td>${m.quantite}</td>
-          <td>${m.projet || ""}</td>
-          <td>${m.note || ""}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function renderAll() {
-      renderNav();
-      renderDashboard();
-      renderProjets();
-      renderInventaire();
-      renderMouvements();
-    }
-
-    function changeView(view) {
-      for (const sec of document.querySelectorAll("section[id^='view-']")) {
-        sec.style.display = "none";
-      }
-      document.getElementById("view-" + view).style.display = "block";
-      for (const btn of document.querySelectorAll("nav button")) {
-        btn.classList.toggle("active", btn.dataset.view === view);
-      }
-    }
-
-    function cycleStatut(statut) {
-      const ordre = ["attente", "taillage", "production", "confirme", "bloque"];
-      const idx = ordre.indexOf(statut || "attente");
-      return ordre[(idx + 1) % ordre.length];
-    }
-
-    function logMouvement({ type, reference, categorie, quantite, projet, note }) {
-      const now = new Date();
-      const date = now.toLocaleString("fr-CA", { dateStyle: "short", timeStyle: "short" });
-      data.mouvements.push({ date, type, reference, categorie, quantite, projet, note });
-    }
-
-    function deduireInventairePourProjet(projet) {
-      const qte = Number(projet.quantite || 0);
-      if (!qte || qte <= 0) return;
-
-      function deduire(cat, code, q, note) {
-        if (!code) return;
-        const refs = data.inventaire[cat];
-        if (!refs || !refs[code]) return;
-        refs[code].quantite -= q;
-        logMouvement({
-          type: "Déduction",
-          reference: code,
-          categorie: cat,
-          quantite: -q,
-          projet: projet.code,
-          note
+                <div class="actions">
+                    <button class="edit">Modifier</button>
+                    <button class="inactive">Inactif</button>
+                </div>
+            `;
+            container.appendChild(div);
         });
-      }
-
-      if (projet.patch) deduire("patchs", projet.patch, qte, "Patch projet " + projet.code);
-      if (projet.flasher) deduire("flashers", projet.flasher, qte, "Flasher projet " + projet.code);
-
-      if (projet.accessoires && Array.isArray(projet.accessoires)) {
-        for (const acc of projet.accessoires) {
-          const code = acc.trim();
-          if (!code) continue;
-          if (data.inventaire.boutons[code]) {
-            deduire("boutons", code, qte, "Bouton projet " + projet.code);
-          } else if (data.inventaire.rivets[code]) {
-            deduire("rivets", code, qte, "Rivet projet " + projet.code);
-          }
-        }
-      }
     }
 
-    function initEvents() {
-      document.querySelectorAll("nav button").forEach(btn => {
-        btn.addEventListener("click", () => changeView(btn.dataset.view));
-      });
+    renderCards("tissu");
+</script>
 
-      const btnNouveau = document.getElementById("btn-nouveau-projet");
-      const formCard = document.getElementById("form-projet-card");
-      const btnAnnuler = document.getElementById("projet-annuler");
-      const btnEnregistrer = document.getElementById("projet-enregistrer");
-
-      btnNouveau.addEventListener("click", () => {
-        formCard.style.display = "block";
-      });
-
-      btnAnnuler.addEventListener("click", () => {
-        formCard.style.display = "none";
-      });
-
-      btnEnregistrer.addEventListener("click", () => {
-        const code = document.getElementById("projet-code").value.trim();
-        const client = document.getElementById("projet-client").value.trim();
-        const style = document.getElementById("projet-style").value.trim();
-        const quantite = Number(document.getElementById("projet-quantite").value || 0);
-        const tissu = document.getElementById("projet-tissu").value.trim();
-        const patch = document.getElementById("projet-patch").value.trim();
-        const flasher = document.getElementById("projet-flasher").value.trim();
-        const accessoiresRaw = document.getElementById("projet-accessoires").value.trim();
-        const notes = document.getElementById("projet-notes").value.trim();
-
-        if (!code || !quantite) {
-          alert("Code projet et quantité sont obligatoires.");
-          return;
-        }
-
-        const existant = data.projets.find(p => p.code === code);
-        if (existant) {
-          alert("Un projet avec ce code existe déjà.");
-          return;
-        }
-
-        const projet = {
-          code,
-          client,
-          style,
-          quantite,
-          tissu,
-          patch,
-          flasher,
-          accessoires: accessoiresRaw ? accessoiresRaw.split(",") : [],
-          notes,
-          statut: "attente"
-        };
-
-        data.projets.push(projet);
-        logMouvement({
-          type: "Création projet",
-          reference: code,
-          categorie: "projet",
-          quantite: quantite,
-          projet: code,
-          note: "Nouveau projet"
-        });
-
-        deduireInventairePourProjet(projet);
-
-        formCard.style.display = "none";
-        document.getElementById("projet-code").value = "";
-        document.getElementById("projet-client").value = "";
-        document.getElementById("projet-style").value = "";
-        document.getElementById("projet-quantite").value = "";
-        document.getElementById("projet-tissu").value = "";
-        document.getElementById("projet-patch").value = "";
-        document.getElementById("projet-flasher").value = "";
-        document.getElementById("projet-accessoires").value = "";
-        document.getElementById("projet-notes").value = "";
-
-        saveData();
-      });
-
-      document.querySelector("#table-projets tbody").addEventListener("click", (e) => {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-        const code = btn.dataset.code;
-        const action = btn.dataset.action;
-        const projet = data.projets.find(p => p.code === code);
-        if (!projet) return;
-
-        if (action === "cycle") {
-          projet.statut = cycleStatut(projet.statut);
-          logMouvement({
-            type: "Changement statut",
-            reference: code,
-            categorie: "projet",
-            quantite: 0,
-            projet: code,
-            note: "Nouveau statut: " + statusLabel(projet.statut)
-          });
-          saveData();
-        } else if (action === "delete") {
-          if (!confirm("Supprimer ce projet ?")) return;
-          data.projets = data.projets.filter(p => p.code !== code);
-          logMouvement({
-            type: "Suppression projet",
-            reference: code,
-            categorie: "projet",
-            quantite: 0,
-            projet: code,
-            note: "Projet supprimé"
-          });
-          saveData();
-        }
-      });
-
-      document.getElementById("inventaire-categorie").addEventListener("change", renderInventaire);
-      document.getElementById("inventaire-filtre").addEventListener("input", renderInventaire);
-
-      document.getElementById("cfg-ajouter").addEventListener("click", () => {
-        const cat = document.getElementById("cfg-cat").value;
-        const code = document.getElementById("cfg-code").value.trim();
-        const nom = document.getElementById("cfg-nom").value.trim();
-        const couleur = document.getElementById("cfg-couleur").value.trim();
-        const quantite = Number(document.getElementById("cfg-quantite").value || 0);
-        const unite = document.getElementById("cfg-unite").value.trim() || "unité";
-
-        if (!code || !nom) {
-          alert("Code et nom sont obligatoires.");
-          return;
-        }
-
-        if (!data.inventaire[cat]) data.inventaire[cat] = {};
-        data.inventaire[cat][code] = { nom, couleur, quantite, unite };
-
-        logMouvement({
-          type: "Ajout / MAJ inventaire",
-          reference: code,
-          categorie: cat,
-          quantite,
-          projet: "",
-          note: "Ajout / MAJ via config"
-        });
-
-        document.getElementById("cfg-code").value = "";
-        document.getElementById("cfg-nom").value = "";
-        document.getElementById("cfg-couleur").value = "";
-        document.getElementById("cfg-quantite").value = "";
-        document.getElementById("cfg-unite").value = "unité";
-
-        saveData();
-      });
-
-      document.getElementById("btn-export").addEventListener("click", () => {
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "erp_textile_confectionnfd.json";
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-
-      document.getElementById("btn-reset").addEventListener("click", () => {
-        if (!confirm("Réinitialiser toutes les données (projets, mouvements, inventaire modifié) ?")) return;
-        localStorage.removeItem(STORAGE_KEY);
-        data = loadData();
-        renderAll();
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      initEvents();
-      renderAll();
-    });
-  </script>
 </body>
 </html>
-<script>
-const defaultData = {
-  inventaire: {
-    tissus: {
-      "0570-ST-SSK": { nom:"0570-ST-SSK", quantite:755, unite:"m" },
-      "0571-ST-SSK": { nom:"0571-ST-SSK", quantite:590, unite:"m" },
-      "B737-BK": { nom:"B737-BK", quantite:4559, unite:"m" }
-      // ➜ COLLE ICI TOUTES TES RÉFÉRENCES TISSU
-    },
-    patchs: {
-      "LP0001-ET": { nom:"N&F MEN'S PANTS - PATCH", couleur:"ENGLISH TAN", quantite:2468, unite:"unité" },
-      "LP0001-BL": { nom:"N&F MEN'S PANTS - PATCH", couleur:"BLACK", quantite:-614, unite:"unité" }
-      // ➜ COLLE ICI TOUTES TES RÉFÉRENCES PATCH
-    },
-    flashers: {
-      "PF0301": { nom:"BLACK POWER STRETCH", quantite:2464, unite:"unité" },
-      "PF0555": { nom:"DEEP INDIGO SELVEDGE", quantite:3212, unite:"unité" }
-      // ➜ COLLE ICI TOUTES TES RÉFÉRENCES FLASHER
-    },
-    boutons: {
-      "BT01": { nom:"27L TIN N&F BUTTON", couleur:"TIN", quantite:28954, unite:"unité" },
-      "BT03": { nom:"27L Black N&F Button", couleur:"BLACK", quantite:22363.36, unite:"unité" }
-      // ➜ COLLE ICI TOUTES TES RÉFÉRENCES BOUTON
-    },
-    rivets: {
-      "RVP01": { nom:"PIN RIVET TIN RT50", couleur:"TIN", quantite:67393, unite:"unité" },
-      "RV01": { nom:"RIVET TIN RT205", couleur:"TIN", quantite:55427, unite:"unité" }
-      // ➜ COLLE ICI TOUTES TES RÉFÉRENCES RIVET
-    },
-    etiquettes: {
-      "WL01": { nom:"Woven Label N&F", quantite:18600, unite:"unité" },
-      "HT14": { nom:"Generic Naked & Famous hang tag", quantite:3081, unite:"unité" }
-      // ➜ COLLE ICI TOUTES TES RÉFÉRENCES ÉTIQUETTE
-    }
-  },
-  projets: [],
-  mouvements: []
-};
-
-const STORAGE_KEY = "erp_textile_confectionnfd_v1";
-</script>
-<script>
-function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return structuredClone(defaultData);
-    const parsed = JSON.parse(raw);
-    return {
-      inventaire: parsed.inventaire || structuredClone(defaultData.inventaire),
-      projets: parsed.projets || [],
-      mouvements: parsed.mouvements || []
-    };
-  }catch{
-    return structuredClone(defaultData);
-  }
-}
-
-let data = loadData();
-
-function saveData(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  renderAll();
-}
-
-function statusClass(s){
-  return {
-    attente:"status-pill status-attente",
-    taillage:"status-pill status-taillage",
-    production:"status-pill status-production",
-    confirme:"status-pill status-confirme",
-    bloque:"status-pill status-bloque"
-  }[s] || "status-pill status-attente";
-}
-
-function statusLabel(s){
-  return {
-    attente:"En attente",
-    taillage:"Taillage",
-    production:"Production",
-    confirme:"Confirmé",
-    bloque:"Bloqué"
-  }[s] || s;
-}
-
-function renderNav(){
-  document.getElementById("badge-projets").textContent = data.projets.length;
-}
-
-function renderDashboard(){
-  const stats = {attente:0,taillage:0,production:0,confirme:0,bloque:0};
-  data.projets.forEach(p=>stats[p.statut]++);
-  document.getElementById("kpi-projets").innerHTML = `
-    <div class="small">
-      <div>${stats.attente} en attente</div>
-      <div>${stats.taillage} en taillage</div>
-      <div>${stats.production} en production</div>
-      <div>${stats.confirme} confirmés</div>
-      <div>${stats.bloque} bloqués</div>
-    </div>
-  `;
-
-  const alertes=[];
-  for(const [cat,refs] of Object.entries(data.inventaire)){
-    for(const [code,item] of Object.entries(refs)){
-      if(item.quantite<0){
-        alertes.push(`<div class="small danger-text">[${cat}] ${code} : ${item.quantite}</div>`);
-      }
-    }
-  }
-  document.getElementById("kpi-alertes").innerHTML = alertes.length?alert
-  /************************************************************
- *  BLOC 3A — Chargement / Sauvegarde / Statuts / Navigation
- ************************************************************/
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(defaultData);
-
-    const parsed = JSON.parse(raw);
-
-    return {
-      inventaire: parsed.inventaire || structuredClone(defaultData.inventaire),
-      projets: parsed.projets || [],
-      mouvements: parsed.mouvements || []
-    };
-  } catch (e) {
-    console.error("Erreur chargement données :", e);
-    return structuredClone(defaultData);
-  }
-}
-
-let data = loadData();
-
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  renderAll();
-}
-
-/* ------------------------------
-   Gestion des statuts de projets
------------------------------- */
-
-function statusClass(statut) {
-  switch (statut) {
-    case "attente": return "status-pill status-attente";
-    case "taillage": return "status-pill status-taillage";
-    case "production": return "status-pill status-production";
-    case "confirme": return "status-pill status-confirme";
-    case "bloque": return "status-pill status-bloque";
-    default: return "status-pill status-attente";
-  }
-}
-
-function statusLabel(statut) {
-  switch (statut) {
-    case "attente": return "En attente";
-    case "taillage": return "Taillage";
-    case "production": return "Production";
-    case "confirme": return "Confirmé";
-    case "bloque": return "Bloqué";
-    default: return statut;
-  }
-}
-
-function cycleStatut(statut) {
-  const ordre = ["attente", "taillage", "production", "confirme", "bloque"];
-  const idx = ordre.indexOf(statut || "attente");
-  return ordre[(idx + 1) % ordre.length];
-}
-
-/* ------------------------------
-   Navigation entre les sections
------------------------------- */
-
-function changeView(view) {
-  document.querySelectorAll("section[id^='view-']").forEach(sec => {
-    sec.style.display = "none";
-  });
-
-  document.getElementById("view-" + view).style.display = "block";
-
-  document.querySelectorAll("nav button").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.view === view);
-  });
-}
-
-function renderNav() {
-  document.getElementById("badge-projets").textContent = data.projets.length;
-}
-  /************************************************************
- *  BLOC 3B — Rendu du tableau de bord, projets, inventaire,
- *            mouvements
- ************************************************************/
-
-/* ------------------------------
-   Tableau de bord
------------------------------- */
-
-function renderDashboard() {
-  const kpiProjets = document.getElementById("kpi-projets");
-  const kpiAlertes = document.getElementById("kpi-alertes");
-  const kpiMouvements = document.getElementById("kpi-mouvements");
-
-  /* ---- Statistiques projets ---- */
-  const stats = { attente: 0, taillage: 0, production: 0, confirme: 0, bloque: 0 };
-
-  for (const p of data.projets) {
-    stats[p.statut || "attente"]++;
-  }
-
-  kpiProjets.innerHTML = `
-    <div class="small">
-      <div><span class="status-pill status-attente"></span> ${stats.attente} en attente</div>
-      <div><span class="status-pill status-taillage"></span> ${stats.taillage} en taillage</div>
-      <div><span class="status-pill status-production"></span> ${stats.production} en production</div>
-      <div><span class="status-pill status-confirme"></span> ${stats.confirme} confirmés</div>
-      <div><span class="status-pill status-bloque"></span> ${stats.bloque} bloqués</div>
-    </div>
-  `;
-
-  /* ---- Alertes inventaire ---- */
-  const alertes = [];
-
-  for (const [cat, refs] of Object.entries(data.inventaire)) {
-    for (const [code, item] of Object.entries(refs)) {
-      if (item.quantite < 0) {
-        alertes.push(
-          `<div class="small danger-text">[${cat}] ${code} – ${item.nom || ""} (${item.quantite})</div>`
-        );
-      }
-    }
-  }
-
-  kpiAlertes.innerHTML = alertes.length
-    ? alertes.join("")
-    : `<div class="small muted">Aucune alerte critique.</div>`;
-
-  /* ---- Derniers mouvements ---- */
-  const derniers = [...data.mouvements].slice(-5).reverse();
-
-  if (!derniers.length) {
-    kpiMouvements.innerHTML = `<div class="small muted">Aucun mouvement enregistré.</div>`;
-  } else {
-    kpiMouvements.innerHTML = derniers
-      .map(
-        m => `
-        <div class="small">
-          <span class="muted">${m.date}</span> – 
-          <span class="tag">${m.type}</span>
-          <strong>${m.reference}</strong> (${m.categorie}) : ${m.quantite}
-          <span class="muted">(${m.projet || "—"})</span>
-        </div>
-      `
-      )
-      .join("");
-  }
-}
-
-/* ------------------------------
-   Rendu des projets
------------------------------- */
-
-function renderProjets() {
-  const tbody = document.querySelector("#table-projets tbody");
-  tbody.innerHTML = "";
-
-  for (const p of data.projets) {
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${p.code}</td>
-      <td>
-        <div class="small"><strong>${p.client || ""}</strong></div>
-        <div class="small muted">${p.style || ""}</div>
-      </td>
-      <td>${p.quantite}</td>
-      <td>${p.tissu || ""}</td>
-      <td>${p.patch || ""}</td>
-      <td>${p.flasher || ""}</td>
-      <td><span class="${statusClass(p.statut)}">${statusLabel(p.statut)}</span></td>
-      <td>
-        <button class="secondary small" data-action="cycle" data-code="${p.code}">Statut +</button>
-        <button class="danger" data-action="delete" data-code="${p.code}">Supprimer</button>
-      </td>
-    `;
-
-    tbody.appendChild(tr);
-  }
-}
-
-/* ------------------------------
-   Rendu de l’inventaire
------------------------------- */
-
-function renderInventaire() {
-  const cat = document.getElementById("inventaire-categorie").value;
-  const filtre = document.getElementById("inventaire-filtre").value.toLowerCase();
-  const tbody = document.querySelector("#table-inventaire tbody");
-
-  tbody.innerHTML = "";
-
-  const refs = data.inventaire[cat] || {};
-
-  for (const [code, item] of Object.entries(refs)) {
-    const texte = (code + " " + (item.nom || "") + " " + (item.couleur || "")).toLowerCase();
-
-    if (filtre && !texte.includes(filtre)) continue;
-
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${code}</td>
-      <td>${item.nom || ""}</td>
-      <td>${item.couleur || ""}</td>
-      <td class="${item.quantite < 0 ? "danger-text" : ""}">${item.quantite}</td>
-      <td>${item.unite || ""}</td>
-    `;
-
-    tbody.appendChild(tr);
-  }
-}
-
-/* ------------------------------
-   Rendu des mouvements
------------------------------- */
-
-function renderMouvements() {
-  const tbody = document.querySelector("#table-mouvements tbody");
-  tbody.innerHTML = "";
-
-  for (const m of data.mouvements.slice().reverse()) {
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${m.date}</td>
-      <td>${m.type}</td>
-      <td>${m.reference}</td>
-      <td>${m.categorie}</td>
-      <td>${m.quantite}</td>
-      <td>${m.projet || ""}</td>
-      <td>${m.note || ""}</td>
-    `;
-
-    tbody.appendChild(tr);
-  }
-}
-
-/* ------------------------------
-   Rendu global
------------------------------- */
-
-function renderAll() {
-  renderNav();
-  renderDashboard();
-  renderProjets();
-  renderInventaire();
-  renderMouvements();
-}
-  /************************************************************
- *  BLOC 3C — Gestion des projets, déductions automatiques,
- *            mouvements, suppression, changement de statut
- ************************************************************/
-
-/* ------------------------------
-   Journal des mouvements
------------------------------- */
-
-function logMouvement({ type, reference, categorie, quantite, projet, note }) {
-  const now = new Date();
-  const date = now.toLocaleString("fr-CA", {
-    dateStyle: "short",
-    timeStyle: "short"
-  });
-
-  data.mouvements.push({
-    date,
-    type,
-    reference,
-    categorie,
-    quantite,
-    projet,
-    note
-  });
-}
-
-/* ------------------------------
-   Déduction automatique inventaire
------------------------------- */
-
-function deduireInventairePourProjet(projet) {
-  const qte = Number(projet.quantite || 0);
-  if (!qte || qte <= 0) return;
-
-  function deduire(cat, code, q, note) {
-    if (!code) return;
-    const refs = data.inventaire[cat];
-    if (!refs || !refs[code]) return;
-
-    refs[code].quantite -= q;
-
-    logMouvement({
-      type: "Déduction",
-      reference: code,
-      categorie: cat,
-      quantite: -q,
-      projet: projet.code,
-      note
-    });
-  }
-
-  /* Patch */
-  if (projet.patch) {
-    deduire("patchs", projet.patch, qte, "Patch projet " + projet.code);
-  }
-
-  /* Flasher */
-  if (projet.flasher) {
-    deduire("flashers", projet.flasher, qte, "Flasher projet " + projet.code);
-  }
-
-  /* Accessoires (boutons + rivets) */
-  if (projet.accessoires && Array.isArray(projet.accessoires)) {
-    for (const acc of projet.accessoires) {
-      const code = acc.trim();
-      if (!code) continue;
-
-      if (data.inventaire.boutons[code]) {
-        deduire("boutons", code, qte, "Bouton projet " + projet.code);
-      } else if (data.inventaire.rivets[code]) {
-        deduire("rivets", code, qte, "Rivet projet " + projet.code);
-      }
-    }
-  }
-
-  /* Tissu → déduction différée (au taillage) */
-  // NOTE : tu peux activer la déduction tissu ici si tu veux
-}
-
-/* ------------------------------
-   Gestion du formulaire projet
------------------------------- */
-
-function initProjetForm() {
-  const btnNouveau = document.getElementById("btn-nouveau-projet");
-  const formCard = document.getElementById("form-projet-card");
-  const btnAnnuler = document.getElementById("projet-annuler");
-  const btnEnregistrer = document.getElementById("projet-enregistrer");
-
-  btnNouveau.addEventListener("click", () => {
-    formCard.style.display = "block";
-  });
-
-  btnAnnuler.addEventListener("click", () => {
-    formCard.style.display = "none";
-  });
-
-  btnEnregistrer.addEventListener("click", () => {
-    const code = document.getElementById("projet-code").value.trim();
-    const client = document.getElementById("projet-client").value.trim();
-    const style = document.getElementById("projet-style").value.trim();
-    const quantite = Number(document.getElementById("projet-quantite").value || 0);
-    const tissu = document.getElementById("projet-tissu").value.trim();
-    const patch = document.getElementById("projet-patch").value.trim();
-    const flasher = document.getElementById("projet-flasher").value.trim();
-    const accessoiresRaw = document.getElementById("projet-accessoires").value.trim();
-    const notes = document.getElementById("projet-notes").value.trim();
-
-    if (!code || !quantite) {
-      alert("Code projet et quantité sont obligatoires.");
-      return;
-    }
-
-    const existant = data.projets.find(p => p.code === code);
-    if (existant) {
-      alert("Un projet avec ce code existe déjà.");
-      return;
-    }
-
-    const projet = {
-      code,
-      client,
-      style,
-      quantite,
-      tissu,
-      patch,
-      flasher,
-      accessoires: accessoiresRaw ? accessoiresRaw.split(",") : [],
-      notes,
-      statut: "attente"
-    };
-
-    data.projets.push(projet);
-
-    logMouvement({
-      type: "Création projet",
-      reference: code,
-      categorie: "projet",
-      quantite: quantite,
-      projet: code,
-      note: "Nouveau projet"
-    });
-
-    deduireInventairePourProjet(projet);
-
-    formCard.style.display = "none";
-
-    document.getElementById("projet-code").value = "";
-    document.getElementById("projet-client").value = "";
-    document.getElementById("projet-style").value = "";
-    document.getElementById("projet-quantite").value = "";
-    document.getElementById("projet-tissu").value = "";
-    document.getElementById("projet-patch").value = "";
-    document.getElementById("projet-flasher").value = "";
-    document.getElementById("projet-accessoires").value = "";
-    document.getElementById("projet-notes").value = "";
-
-    saveData();
-  });
-}
-
-/* ------------------------------
-   Actions sur les projets (statut + suppression)
------------------------------- */
-
-function initProjetActions() {
-  document.querySelector("#table-projets tbody").addEventListener("click", (e) => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
-    const code = btn.dataset.code;
-    const action = btn.dataset.action;
-
-    const projet = data.projets.find(p => p.code === code);
-    if (!projet) return;
-
-    if (action === "cycle") {
-      projet.statut = cycleStatut(projet.statut);
-
-      logMouvement({
-        type: "Changement statut",
-        reference: code,
-        categorie: "projet",
-        quantite: 0,
-        projet: code,
-        note: "Nouveau statut : " + statusLabel(projet.statut)
-      });
-
-      saveData();
-    }
-
-    if (action === "delete") {
-      if (!confirm("Supprimer ce projet ?")) return;
-
-      data.projets = data.projets.filter(p => p.code !== code);
-
-      logMouvement({
-        type: "Suppression projet",
-        reference: code,
-        categorie: "projet",
-        quantite: 0,
-        projet: code,
-        note: "Projet supprimé"
-      });
-
-      saveData();
-    }
-  });
-}
-  /************************************************************
- *  BLOC 3C — Gestion des projets, déductions automatiques,
- *            mouvements, suppression, changement de statut
- ************************************************************/
-
-/* ------------------------------
-   Journal des mouvements
------------------------------- */
-
-function logMouvement({ type, reference, categorie, quantite, projet, note }) {
-  const now = new Date();
-  const date = now.toLocaleString("fr-CA", {
-    dateStyle: "short",
-    timeStyle: "short"
-  });
-
-  data.mouvements.push({
-    date,
-    type,
-    reference,
-    categorie,
-    quantite,
-    projet,
-    note
-  });
-}
-
-/* ------------------------------
-   Déduction automatique inventaire
------------------------------- */
-
-function deduireInventairePourProjet(projet) {
-  const qte = Number(projet.quantite || 0);
-  if (!qte || qte <= 0) return;
-
-  function deduire(cat, code, q, note) {
-    if (!code) return;
-    const refs = data.inventaire[cat];
-    if (!refs || !refs[code]) return;
-
-    refs[code].quantite -= q;
-
-    logMouvement({
-      type: "Déduction",
-      reference: code,
-      categorie: cat,
-      quantite: -q,
-      projet: projet.code,
-      note
-    });
-  }
-
-  /* Patch */
-  if (projet.patch) {
-    deduire("patchs", projet.patch, qte, "Patch projet " + projet.code);
-  }
-
-  /* Flasher */
-  if (projet.flasher) {
-    deduire("flashers", projet.flasher, qte, "Flasher projet " + projet.code);
-  }
-
-  /* Accessoires (boutons + rivets) */
-  if (projet.accessoires && Array.isArray(projet.accessoires)) {
-    for (const acc of projet.accessoires) {
-      const code = acc.trim();
-      if (!code) continue;
-
-      if (data.inventaire.boutons[code]) {
-        deduire("boutons", code, qte, "Bouton projet " + projet.code);
-      } else if (data.inventaire.rivets[code]) {
-        deduire("rivets", code, qte, "Rivet projet " + projet.code);
-      }
-    }
-  }
-
-  /* Tissu → déduction différée (au taillage) */
-  // NOTE : tu peux activer la déduction tissu ici si tu veux
-}
-
-/* ------------------------------
-   Gestion du formulaire projet
------------------------------- */
-
-function initProjetForm() {
-  const btnNouveau = document.getElementById("btn-nouveau-projet");
-  const formCard = document.getElementById("form-projet-card");
-  const btnAnnuler = document.getElementById("projet-annuler");
-  const btnEnregistrer = document.getElementById("projet-enregistrer");
-
-  btnNouveau.addEventListener("click", () => {
-    formCard.style.display = "block";
-  });
-
-  btnAnnuler.addEventListener("click", () => {
-    formCard.style.display = "none";
-  });
-
-  btnEnregistrer.addEventListener("click", () => {
-    const code = document.getElementById("projet-code").value.trim();
-    const client = document.getElementById("projet-client").value.trim();
-    const style = document.getElementById("projet-style").value.trim();
-    const quantite = Number(document.getElementById("projet-quantite").value || 0);
-    const tissu = document.getElementById("projet-tissu").value.trim();
-    const patch = document.getElementById("projet-patch").value.trim();
-    const flasher = document.getElementById("projet-flasher").value.trim();
-    const accessoiresRaw = document.getElementById("projet-accessoires").value.trim();
-    const notes = document.getElementById("projet-notes").value.trim();
-
-    if (!code || !quantite) {
-      alert("Code projet et quantité sont obligatoires.");
-      return;
-    }
-
-    const existant = data.projets.find(p => p.code === code);
-    if (existant) {
-      alert("Un projet avec ce code existe déjà.");
-      return;
-    }
-
-    const projet = {
-      code,
-      client,
-      style,
-      quantite,
-      tissu,
-      patch,
-      flasher,
-      accessoires: accessoiresRaw ? accessoiresRaw.split(",") : [],
-      notes,
-      statut: "attente"
-    };
-
-    data.projets.push(projet);
-
-    logMouvement({
-      type: "Création projet",
-      reference: code,
-      categorie: "projet",
-      quantite: quantite,
-      projet: code,
-      note: "Nouveau projet"
-    });
-
-    deduireInventairePourProjet(projet);
-
-    formCard.style.display = "none";
-
-    document.getElementById("projet-code").value = "";
-    document.getElementById("projet-client").value = "";
-    document.getElementById("projet-style").value = "";
-    document.getElementById("projet-quantite").value = "";
-    document.getElementById("projet-tissu").value = "";
-    document.getElementById("projet-patch").value = "";
-    document.getElementById("projet-flasher").value = "";
-    document.getElementById("projet-accessoires").value = "";
-    document.getElementById("projet-notes").value = "";
-
-    saveData();
-  });
-}
-
-/* ------------------------------
-   Actions sur les projets (statut + suppression)
------------------------------- */
-
-function initProjetActions() {
-  document.querySelector("#table-projets tbody").addEventListener("click", (e) => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
-    const code = btn.dataset.code;
-    const action = btn.dataset.action;
-
-    const projet = data.projets.find(p => p.code === code);
-    if (!projet) return;
-
-    if (action === "cycle") {
-      projet.statut = cycleStatut(projet.statut);
-
-      logMouvement({
-        type: "Changement statut",
-        reference: code,
-        categorie: "projet",
-        quantite: 0,
-        projet: code,
-        note: "Nouveau statut : " + statusLabel(projet.statut)
-      });
-
-      saveData();
-    }
-
-    if (action === "delete") {
-      if (!confirm("Supprimer ce projet ?")) return;
-
-      data.projets = data.projets.filter(p => p.code !== code);
-
-      logMouvement({
-        type: "Suppression projet",
-        reference: code,
-        categorie: "projet",
-        quantite: 0,
-        projet: code,
-        note: "Projet supprimé"
-      });
-
-      saveData();
-    }
-  });
-}
-
-  
-"HT47": { 
-  nom: "HT47", 
-  description: "HAN-TANG", 
-  couleur: "NAKED & FAMOUS - WORK PANT", 
-  quantite: -4, 
-  unite: "unité", 
-  info: "" 
-}... }
-const defaultData = {
-  inventaire: {
-    tissus: {
-      // T1 + T2 + T3 + T4 ici
-    },
-    patchs: {
-      // P1 + P2 ici
-    },
-    flashers: {
-      // F1 + F2 + F3 ici
-    },
-    boutons_rivets: {
-      // BR1 ici
-    },
-    etiquettes: {
-      // E1 ici
-    }
-  }
-}
-{
-  "0570-ST-SSK": { "nom": "0570-ST-SSK", "description": "", "couleur": "", "quantite": 755, "unite": "mètre" },
-  "0571-ST-SSK": { "nom": "0571-ST-SSK", "description": "", "couleur": "", "quantite": 590, "unite": "mètre" },
-  "0579-ST-P-D19": { "nom": "0579-ST-P-D19", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "0802-PS": { "nom": "0802-PS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "0817-PS (1860-385-PS GREEN)": { "nom": "0817-PS (1860-385-PS GREEN)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "0911-UF": { "nom": "0911-UF", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "1547-ST-PS": { "nom": "1547-ST-PS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "1960-391-SO": { "nom": "1960-391-SO", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "1600-199-PSKM": { "nom": "1600-199-PSKM", "description": "", "couleur": "", "quantite": 50, "unite": "mètre" },
-  "2050-89": { "nom": "2050-89", "description": "", "couleur": "", "quantite": 20, "unite": "mètre" },
-  "2160-429": { "nom": "2160-429", "description": "", "couleur": "", "quantite": 447, "unite": "mètre" },
-  "2260-087-SO": { "nom": "2260-087-SO", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2260-088-SO": { "nom": "2260-088-SO", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2260-089": { "nom": "2260-089", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2260-267-NSO": { "nom": "2260-267-NSO", "description": "", "couleur": "", "quantite": 69, "unite": "mètre" },
-  "26010 - C14": { "nom": "26010 - C14", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "26010 - C3": { "nom": "26010 - C3", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "26010 - Y": { "nom": "26010 - Y", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "26010": { "nom": "26010", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "MS710-BB-NSO": { "nom": "MS710-BB-NSO", "description": "", "couleur": "", "quantite": 1677, "unite": "mètre" }
-  {
-  "NFW676BEZR-SFVS": { "nom": "NFW676BEZR-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SHB7720 C/# KI": { "nom": "SHB7720 C/# KI", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OANFD2613 #1D1": { "nom": "OANFD2613 #1D1", "description": "", "couleur": "", "quantite": 133, "unite": "mètre" },
-  "KMW77": { "nom": "KMW77", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "3625-ST-KM": { "nom": "3625-ST-KM", "description": "", "couleur": "", "quantite": 80, "unite": "mètre" },
-  "5022-1365-1A": { "nom": "5022-1365-1A", "description": "", "couleur": "", "quantite": 351, "unite": "mètre" },
-  "5022-1365-1B": { "nom": "5022-1365-1B", "description": "", "couleur": "", "quantite": 312, "unite": "mètre" },
-  "7012W": { "nom": "7012W", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "ASX3214PFD-GREEN": { "nom": "ASX3214PFD-GREEN", "description": "", "couleur": "", "quantite": 8, "unite": "mètre" },
-  "ASX3214PFD-BRICK": { "nom": "ASX3214PFD-BRICK", "description": "", "couleur": "", "quantite": 256.4, "unite": "mètre" },
-  "ASX3214PFD-BLACK": { "nom": "ASX3214PFD-BLACK", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "BE7310ZR2-KOT": { "nom": "BE7310ZR2-KOT", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "B737-BK": { "nom": "B737-BK", "description": "", "couleur": "", "quantite": 4559, "unite": "mètre" },
-  "BY7307-5": { "nom": "BY7307-5", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "DA52-R-PT": { "nom": "DA52-R-PT", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "DA100 DK1": { "nom": "DA100 DK1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "DA63-1D2": { "nom": "DA63-1D2", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "DA69-ATC (DA54-ATC)": { "nom": "DA69-ATC (DA54-ATC)", "description": "", "couleur": "", "quantite": 287, "unite": "mètre" },
-  "DLA-10625": { "nom": "DLA-10625", "description": "", "couleur": "", "quantite": 243, "unite": "mètre" },
-  "FOA7640": { "nom": "FOA7640", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" }
-}
-}
-{
-  "HB7079ID": { "nom": "HB7079ID", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "HI501": { "nom": "HI501", "description": "", "couleur": "", "quantite": 2364, "unite": "mètre" },
-  "KD7307KH": { "nom": "KD7307KH", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KDA10395": { "nom": "KDA10395", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KDA10486": { "nom": "KDA10486", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KS559-B-PL": { "nom": "KS559-B-PL", "description": "", "couleur": "", "quantite": 353, "unite": "mètre" },
-  "KV-0175": { "nom": "KV-0175", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0277": { "nom": "KV-0277", "description": "", "couleur": "", "quantite": 195, "unite": "mètre" },
-  "KV-2018": { "nom": "KV-2018", "description": "", "couleur": "", "quantite": 2308, "unite": "mètre" },
-  "KV-4444-BRW (2260-229)": { "nom": "KV-4444-BRW (2260-229)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-550-ST-ACTH": { "nom": "KV-550-ST-ACTH", "description": "", "couleur": "", "quantite": 1585.5, "unite": "mètre" },
-  "KV-670-BRW-ACT": { "nom": "KV-670-BRW-ACT", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-951-ST-P-D19": { "nom": "KV-951-ST-P-D19", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-952-ST-SSK": { "nom": "KV-952-ST-SSK", "description": "", "couleur": "", "quantite": 672, "unite": "mètre" },
-  "KV-980-ST-ACT": { "nom": "KV-980-ST-ACT", "description": "", "couleur": "", "quantite": 1113, "unite": "mètre" },
-  "KV-946-ST-SSK": { "nom": "KV-946-ST-SSK", "description": "", "couleur": "", "quantite": 200, "unite": "mètre" },
-  "KV-964-ORST-SSK (2260-040)": { "nom": "KV-964-ORST-SSK (2260-040)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-984-ST-ACT": { "nom": "KV-984-ST-ACT", "description": "", "couleur": "", "quantite": 2011, "unite": "mètre" },
-  "KV-0198 (2260-044)": { "nom": "KV-0198 (2260-044)", "description": "", "couleur": "", "quantite": 600, "unite": "mètre" },
-  "KV-9682-ST-SSK": { "nom": "KV-9682-ST-SSK", "description": "", "couleur": "", "quantite": 200, "unite": "mètre" }
-}{
-  "MS700-NSO": { "nom": "MS700-NSO", "description": "", "couleur": "", "quantite": 871, "unite": "mètre" },
-  "NF610TUR-SFVS": { "nom": "NF610TUR-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "NF737BK-P": { "nom": "NF737BK-P", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "NF737P-G": { "nom": "NF737P-G", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "NFV1713": { "nom": "NFV1713", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "ON55-SFVS": { "nom": "ON55-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "PM18WWC7BD ++": { "nom": "PM18WWC7BD ++", "description": "", "couleur": "", "quantite": 24, "unite": "mètre" },
-  "SB666-D-SF": { "nom": "SB666-D-SF", "description": "", "couleur": "", "quantite": 168, "unite": "mètre" },
-  "SBM180302BK": { "nom": "SBM180302BK", "description": "", "couleur": "", "quantite": 1012.5, "unite": "mètre" },
-  "S-KV-9069-UF (2260-286-UF)": { "nom": "S-KV-9069-UF (2260-286-UF)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SKM180302": { "nom": "SKM180302", "description": "", "couleur": "", "quantite": 65, "unite": "mètre" },
-  "V1713 C11": { "nom": "V1713 C11", "description": "", "couleur": "", "quantite": 84.5, "unite": "mètre" },
-  "Y7-CO6": { "nom": "Y7-CO6", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "Y7307RB-1": { "nom": "Y7307RB-1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "YSA-710-BACKP": { "nom": "YSA-710-BACKP", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "Y7307": { "nom": "Y7307", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "HB709NS OD": { "nom": "HB709NS OD", "description": "", "couleur": "", "quantite": 352.5, "unite": "mètre" },
-  "NF566RD-SFVS": { "nom": "NF566RD-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SB666-2 DBK SF": { "nom": "SB666-2 DBK SF", "description": "", "couleur": "", "quantite": 35, "unite": "mètre" },
-  "YSA737-W": { "nom": "YSA737-W", "description": "", "couleur": "", "quantite": 561.5, "unite": "mètre" }
-}{
-  "NB656-SFVS": { "nom": "NB656-SFVS", "description": "", "couleur": "", "quantite": 176, "unite": "mètre" },
-  "SB567 #A-ENG": { "nom": "SB567 #A-ENG", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "PRT-0205C": { "nom": "PRT-0205C", "description": "", "couleur": "", "quantite": 90, "unite": "mètre" },
-  "H162-1": { "nom": "H162-1", "description": "", "couleur": "", "quantite": 431, "unite": "mètre" },
-  "14379 C1": { "nom": "14379 C1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "14379 C3": { "nom": "14379 C3", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "88223 #D1": { "nom": "88223 #D1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "88223 #D19": { "nom": "88223 #D19", "description": "", "couleur": "", "quantite": 43, "unite": "mètre" },
-  "KV-964-ORSTBRWSSK (2360-015 SSK)": { "nom": "KV-964-ORSTBRWSSK (2360-015 SSK)", "description": "", "couleur": "", "quantite": 477, "unite": "mètre" },
-  "KV-0286 (2360-057)": { "nom": "KV-0286 (2360-057)", "description": "", "couleur": "", "quantite": 872, "unite": "mètre" },
-  "LF6767BEZR-SFVS": { "nom": "LF6767BEZR-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "S/0551 (2360-032)": { "nom": "S/0551 (2360-032)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "CWV-1200 (2360-029)": { "nom": "CWV-1200 (2360-029)", "description": "", "couleur": "", "quantite": 508, "unite": "mètre" },
-  "COR7122IDRG": { "nom": "COR7122IDRG", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0135-UF": { "nom": "KV-0135-UF", "description": "", "couleur": "", "quantite": 1215, "unite": "mètre" },
-  "PFD21219": { "nom": "PFD21219", "description": "", "couleur": "", "quantite": 468, "unite": "mètre" },
-  "NF10 MIX": { "nom": "NF10 MIX", "description": "", "couleur": "", "quantite": 599, "unite": "mètre" },
-  "BLBK180302BE": { "nom": "BLBK180302BE", "description": "", "couleur": "", "quantite": 1450, "unite": "mètre" },
-  "DA017-R-SF C#1": { "nom": "DA017-R-SF C#1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "RED33": { "nom": "RED33", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" }
-}{
-  "NF58BE-SFVS": { "nom": "NF58BE-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-2200-SO (2360-215-SO)": { "nom": "KV-2200-SO (2360-215-SO)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "YSA737-GR": { "nom": "YSA737-GR", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "88337 DI C5": { "nom": "88337 DI C5", "description": "", "couleur": "", "quantite": 50, "unite": "mètre" },
-  "LOL8DOL8": { "nom": "LOL8DOL8", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-679-BRW-ACT": { "nom": "KV-679-BRW-ACT", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "BK56BK-NF": { "nom": "BK56BK-NF", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "NF737AP": { "nom": "NF737AP", "description": "", "couleur": "", "quantite": 465.5, "unite": "mètre" },
-  "OL56-SFVS": { "nom": "OL56-SFVS", "description": "", "couleur": "", "quantite": 694, "unite": "mètre" },
-  "KDA10716": { "nom": "KDA10716", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "1021-120-1-E": { "nom": "1021-120-1-E", "description": "", "couleur": "", "quantite": 60, "unite": "mètre" },
-  "DW-CM-118ID-B": { "nom": "DW-CM-118ID-B", "description": "", "couleur": "", "quantite": 124.5, "unite": "mètre" },
-  "KR8835": { "nom": "KR8835", "description": "", "couleur": "", "quantite": 195, "unite": "mètre" },
-  "Y88": { "nom": "Y88", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "V1713 C7": { "nom": "V1713 C7", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "V1713 C12": { "nom": "V1713 C12", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "MSV700-NSO": { "nom": "MSV700-NSO", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OANFD1506 C#1D1": { "nom": "OANFD1506 C#1D1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "RMD3230 C4": { "nom": "RMD3230 C4", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "RMD3230 C8": { "nom": "RMD3230 C8", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" }
-}{
-  "TY24324 C4": { "nom": "TY24324 C4", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "TY24324 C128": { "nom": "TY24324 C128", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "TY24324 C133": { "nom": "TY24324 C133", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "88223 C30": { "nom": "88223 C30", "description": "", "couleur": "", "quantite": 28, "unite": "mètre" },
-  "5023-1390-1A Black": { "nom": "5023-1390-1A Black", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "5023-1390-1C Brown": { "nom": "5023-1390-1C Brown", "description": "", "couleur": "", "quantite": -2.8421709430404007E-14, "unite": "mètre" },
-  "KDA102592": { "nom": "KDA102592", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2360-494": { "nom": "2360-494", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "8488 #1": { "nom": "8488 #1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "29000D95 (pocketing)": { "nom": "29000D95 (pocketing)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "29000D70 (pocketing)": { "nom": "29000D70 (pocketing)", "description": "", "couleur": "", "quantite": 29, "unite": "mètre" },
-  "NF737ID-W": { "nom": "NF737ID-W", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-2211-SO (2360-215-SO)": { "nom": "KV-2211-SO (2360-215-SO)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "YSA737-FAJ1": { "nom": "YSA737-FAJ1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SHB7720 C1": { "nom": "SHB7720 C1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0189-ORSH-UF (2360-497-UF)": { "nom": "KV-0189-ORSH-UF (2360-497-UF)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SF8121": { "nom": "SF8121", "description": "", "couleur": "", "quantite": 56, "unite": "mètre" },
-  "KS816W": { "nom": "KS816W", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "NF56P-SFVS": { "nom": "NF56P-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KB66665Y-SFVS": { "nom": "KB66665Y-SFVS", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" }
-}{
-  "OANFD3 C#K1": { "nom": "OANFD3 C#K1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OA1627 C#1": { "nom": "OA1627 C#1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-3266 (2360-495)": { "nom": "KV-3266 (2360-495)", "description": "", "couleur": "", "quantite": 2111, "unite": "mètre" },
-  "2460-128": { "nom": "2460-128", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0277-BRW (2160-235)": { "nom": "KV-0277-BRW (2160-235)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-2211BB-SO (2360-501-SO)": { "nom": "KV-2211BB-SO (2360-501-SO)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OA1158-YM C#4MZ": { "nom": "OA1158-YM C#4MZ", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "NB656-PFD": { "nom": "NB656-PFD", "description": "", "couleur": "", "quantite": 1145, "unite": "mètre" },
-  "YSA-737-CATE": { "nom": "YSA-737-CATE", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SNB656ZR": { "nom": "SNB656ZR", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2360-318": { "nom": "2360-318", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "0591-SN": { "nom": "0591-SN", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-3339-SO (2460-114-SO)": { "nom": "KV-3339-SO (2460-114-SO)", "description": "", "couleur": "", "quantite": 76, "unite": "mètre" },
-  "NYK217 C R": { "nom": "NYK217 C R", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0802-SO": { "nom": "KV-0802-SO", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KD55 (Verge)": { "nom": "KD55 (Verge)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2460-252": { "nom": "2460-252", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "S/CWV-1201 (2460-223)": { "nom": "S/CWV-1201 (2460-223)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "850327 D3 C2": { "nom": "850327 D3 C2", "description": "", "couleur": "", "quantite": 30, "unite": "mètre" },
-  "RBYW775-MSD": { "nom": "RBYW775-MSD", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" }
-}{
-  "DA69-UF-OW C#1D1": { "nom": "DA69-UF-OW C#1D1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0277-BRW-OKM": { "nom": "KV-0277-BRW-OKM", "description": "", "couleur": "", "quantite": 57, "unite": "mètre" },
-  "SB666SF C#Y-3": { "nom": "SB666SF C#Y-3", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-0118": { "nom": "KV-0118", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2460-254": { "nom": "2460-254", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "0816-PS (1760-301)": { "nom": "0816-PS (1760-301)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "TOG3-BSF": { "nom": "TOG3-BSF", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "YA303": { "nom": "YA303", "description": "", "couleur": "", "quantite": 463.5, "unite": "mètre" },
-  "KD710B-W": { "nom": "KD710B-W", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SV629-1-18-K2-W": { "nom": "SV629-1-18-K2-W", "description": "", "couleur": "", "quantite": 483, "unite": "mètre" },
-  "SA607-BK-KWS-W": { "nom": "SA607-BK-KWS-W", "description": "", "couleur": "", "quantite": 583, "unite": "mètre" },
-  "SA656-SV-BK": { "nom": "SA656-SV-BK", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "FR8800-CA16": { "nom": "FR8800-CA16", "description": "", "couleur": "", "quantite": 147, "unite": "mètre" },
-  "Y1610-19HD": { "nom": "Y1610-19HD", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2460-253": { "nom": "2460-253", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "YM250": { "nom": "YM250", "description": "", "couleur": "", "quantite": 168, "unite": "mètre" },
-  "2560-021": { "nom": "2560-021", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "TOG17-NFD-SF": { "nom": "TOG17-NFD-SF", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "BDMR76-BLC": { "nom": "BDMR76-BLC", "descri{
-  "OG9W-PIG FADE": { "nom": "OG9W-PIG FADE", "description": "", "couleur": "", "quantite": 249, "unite": "mètre" },
-  "2460-061-SSK": { "nom": "2460-061-SSK", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2560-008-SO": { "nom": "2560-008-SO", "description": "", "couleur": "", "quantite": 2564, "unite": "mètre" },
-  "KSC7565WW C#11": { "nom": "KSC7565WW C#11", "description": "", "couleur": "", "quantite": 1428.5, "unite": "mètre" },
-  "KR8833-W": { "nom": "KR8833-W", "description": "", "couleur": "", "quantite": 396, "unite": "mètre" },
-  "88223 D4": { "nom": "88223 D4", "description": "", "couleur": "", "quantite": 42, "unite": "mètre" },
-  "OA11011-NFD-SF C/#KI1": { "nom": "OA11011-NFD-SF C/#KI1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "2560-003 (KV-8029)": { "nom": "2560-003 (KV-8029)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "C2157-2": { "nom": "C2157-2", "description": "", "couleur": "", "quantite": 10, "unite": "mètre" },
-  "SB7600 C#1-KS": { "nom": "SB7600 C#1-KS", "description": "", "couleur": "", "quantite": 871, "unite": "mètre" },
-  "Y1610-BE": { "nom": "Y1610-BE", "description": "", "couleur": "", "quantite": 140, "unite": "mètre" },
-  "RED33-BK": { "nom": "RED33-BK", "description": "", "couleur": "", "quantite": 2198, "unite": "mètre" },
-  "KSA1010-L28-W": { "nom": "KSA1010-L28-W", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OGHB1010-HD": { "nom": "OGHB1010-HD", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "SB666 C#2-DBK": { "nom": "SB666 C#2-DBK", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "88306 DA C1": { "nom": "88306 DA C1", "description": "", "couleur": "", "quantite": 300.5, "unite": "mètre" },
-  "4040-1": { "nom": "4040-1", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "KV-9068-SO": { "nom": "KV-9068-SO", "description": "", "couleur": "", "quantite": 1319, "unite": "mètre" },
-  "3301-213 (Pocketing)": { "nom": "3301-213 (Pocketing)", "description": "", "couleur": "", "quantite": 29, "unite": "mètre" },
-  "ON-0900-UF": { "nom": "ON-0900-UF", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" }
-}ption": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OG9W-PIG BL": { "nom": "OG9W-PIG BL", "description": "", "couleur": "", "quantite": 155, "unite": "mètre" }
-}{"KV-971-OR-STBRW-SSK (2460-061-SSK)": { "nom": "KV-971-OR-STBRW-SSK (2460-061-SSK)", "description": "", "couleur": "", "quantite": 528, "unite": "mètre" },
-  "2104 Gris-Noir Godzilla (Pocketing)": { "nom": "2104 Gris-Noir Godzilla (Pocketing)", "description": "", "couleur": "", "quantite": 10, "unite": "mètre" },
-  "Pocketing Couleur Godzilla (Pocketing)": { "nom": "Pocketing Couleur Godzilla (Pocketing)", "description": "", "couleur": "", "quantite": 0, "unite": "mètre" },
-  "OA10998 C#1": { "nom": "OA10998 C#1", "description": "", "couleur": "", "quantite": 3007.5, "unite": "mètre" }
-}
-Télécharger le fichier fichier_inventaire.json
-
