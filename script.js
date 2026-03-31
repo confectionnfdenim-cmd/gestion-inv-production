@@ -197,8 +197,15 @@ function saveItem() {
     closeAddForm();
     
 }
-    <div class="card">
-        <h3>Projet ${p.lot}</h3>
+function renderProjectList() {
+    const div = document.getElementById("project-list");
+    if (!div) return;
+    div.innerHTML = "";
+
+    projets.forEach(p => {
+        div.innerHTML += `
+            <div class="card">
+                <h3>Projet ${p.lot}</h3>
 
         <div class="info"><strong>Client :</strong> ${p.client}</div>
         <div class="info"><strong>Modèle :</strong> ${p.modele}</div>
