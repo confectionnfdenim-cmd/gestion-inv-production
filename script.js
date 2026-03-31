@@ -439,7 +439,10 @@ function fillSelect(id, list) {
     const sel = document.getElementById(id);
     sel.innerHTML = "";
     list.forEach(item => {
-        sel.innerHTML += `<option value="${item.code}">${item.code}</option>`;
+        const opt = document.createElement("option");
+        opt.value = item.code;
+        opt.textContent = item.code; // ✔ CORRECT
+        sel.appendChild(opt);
     });
 }
 
