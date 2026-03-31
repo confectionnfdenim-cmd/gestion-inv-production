@@ -94,7 +94,7 @@ function renderCards(type) {
         const div = document.createElement("div");
         div.className = "card " + getColorClass(item.quantite, item.min);
 
-        div.innerHTML = `
+        div.innerHTML = m.nom;
             <h3>${item.code}</h3>
             <div class="info"><strong>Info 1 :</strong> ${item.extra1 || ""}</div>
             <div class="info"><strong>Info 2 :</strong> ${item.extra2 || ""}</div>
@@ -441,7 +441,7 @@ function fillSelect(id, list) {
     list.forEach(item => {
         const opt = document.createElement("option");
         opt.value = item.code;
-        opt.textContent = item.code; // ✔ CORRECT
+        opt.textContent = item.nom; 
         sel.appendChild(opt);
     });
 }
@@ -539,10 +539,10 @@ function setStatus(id, statut) {
 function renderProjectList() {
     const div = document.getElementById("project-list");
     if (!div) return;
-    div.innerHTML = "";
+    div.innerHTML += m.nom;
 
     projets.forEach(p => {
-        div.innerHTML += `
+        div.innerHTML += m.nom;
             <div class="card">
                 <h3>Projet ${p.lot}</h3>
                 <div class="info"><strong>Client :</strong> ${p.client}</div>
