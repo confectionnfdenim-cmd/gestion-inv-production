@@ -1,146 +1,9 @@
-<nav class="menu">
-  <button data-tab="tissu">Tissu</button>
-  <button data-tab="patch">Patch</button>
-  <button data-tab="flasher">Flasher</button>
-  <button data-tab="bouton">Bouton</button>
-  <button data-tab="rivet">Rivet</button>
-  <button data-tab="etiquette">Étiquette</button>
-  <button data-tab="projets">Projets</button>
-  <button data-tab="modeles">Modèles</button>
-  <button data-tab="mouvements">Mouvements</button>
-</nav>
-
-<div id="content">
-  <section id="tissu" class="tab"></section>
-  <section id="patch" class="tab"></section>
-  <section id="flasher" class="tab"></section>
-  <section id="bouton" class="tab"></section>
-  <section id="rivet" class="tab"></section>
-  <section id="etiquette" class="tab"></section>
-  <section id="projets" class="tab"></section>
-  <section id="modeles" class="tab"></section>
-  <section id="mouvements" class="tab"></section>
-</div>
-
-<table class="inv-table">
-  <thead>
-    <tr>
-      <th>Code</th>
-      <th>Nom / Remarque</th>
-      <th>Couleur / Genre</th>
-      <th>Quantité</th>
-      <th>Unité</th>
-      <th>Actif</th>
-      <th>Stock min</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="tbody-tissu"></tbody>
-</table>
-
-function getRowColor(qte, min) {
-  if (qte <= min) return "stock-low"
-  if (qte <= min * 1.5) return "stock-warning"
-  return "stock-ok"
-}
-
-    function editItem(type, code) { /* ouvre un formulaire */ }
-function deactivateItem(type, code) { /* passe actif = false */ }
-function addItem(type) { /* formulaire d’ajout */ }
-
-    mouvements.push({
-  date: new Date().toISOString(),
-  type: "sortie",
-  article: code,
-  quantite: qte,
-  raison: "Projet " + projetId,
-  commentaire: ""
-})
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Inventaire N&F</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #F7F7F7;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Menu */
-    nav {
-        display: flex;
-        gap: 10px;
-        padding: 15px;
-        background: #FFFFFF;
-        border-bottom: 1px solid #DDD;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-    nav button {
-        padding: 10px 18px;
-        border: none;
-        background: #4A90E2;
-        color: white;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 15px;
-    }
-    nav button:hover {
-        background: #357ABD;
-    }
-
-    /* Sections */
-    .tab {
-        display: none;
-        padding: 20px;
-    }
-
-    /* Cartes */
-    .card-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 15px;
-    }
-
-    .card {
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        border-left: 10px solid #4A90E2;
-    }
-
-    .card h3 {
-        margin: 0 0 10px 0;
-        font-size: 18px;
-    }
-
-    .info {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    /* Couleurs de stock */
-    .stock-ok { border-left-color: #4CAF50; background: #DFF6DD; }
-    .stock-warning { border-left-color: #FFC107; background: #FFF4CE; }
-    .stock-low { border-left-color: #F44336; background: #FDE7E9; }
-
-    /* Boutons */
-    .actions button {
-        margin-right: 5px;
-        padding: 6px 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .edit { background: #4A90E2; color: white; }
-    .inactive { background: #999; color: white; }
-</style>
+    <meta charset="UTF-8">
+    <title>Gestion Inventaire N&F</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -159,157 +22,233 @@ function addItem(type) { /* formulaire d’ajout */ }
 
 <div id="content">
 
-    <!-- Exemple : TISSU -->
+    <!-- TISSU -->
     <section id="tissu" class="tab">
         <h2>Tissu</h2>
+        <button class="add-btn" onclick="openAddForm('tissu')">+ Ajouter un article</button>
+
+        <div class="filters">
+            <select id="filter-actif-tissu" onchange="applyFilters('tissu')">
+                <option value="all">Tous</option>
+                <option value="active">Actifs</option>
+                <option value="inactive">Inactifs</option>
+            </select>
+
+            <select id="filter-stock-tissu" onchange="applyFilters('tissu')">
+                <option value="all">Stock normal</option>
+                <option value="low">Stock bas</option>
+            </select>
+
+            <input type="text" id="filter-search-tissu" placeholder="Recherche code..." oninput="applyFilters('tissu')">
+        </div>
+
         <div class="card-container" id="cards-tissu"></div>
     </section>
 
     <!-- PATCH -->
     <section id="patch" class="tab">
         <h2>Patch</h2>
+        <button class="add-btn" onclick="openAddForm('patch')">+ Ajouter un article</button>
+
+        <div class="filters">
+            <select id="filter-actif-patch" onchange="applyFilters('patch')">
+                <option value="all">Tous</option>
+                <option value="active">Actifs</option>
+                <option value="inactive">Inactifs</option>
+            </select>
+
+            <select id="filter-stock-patch" onchange="applyFilters('patch')">
+                <option value="all">Stock normal</option>
+                <option value="low">Stock bas</option>
+            </select>
+
+            <input type="text" id="filter-search-patch" placeholder="Recherche code..." oninput="applyFilters('patch')">
+        </div>
+
         <div class="card-container" id="cards-patch"></div>
     </section>
 
     <!-- FLASHER -->
     <section id="flasher" class="tab">
         <h2>Flasher</h2>
+        <button class="add-btn" onclick="openAddForm('flasher')">+ Ajouter un article</button>
+
+        <div class="filters">
+            <select id="filter-actif-flasher" onchange="applyFilters('flasher')">
+                <option value="all">Tous</option>
+                <option value="active">Actifs</option>
+                <option value="inactive">Inactifs</option>
+            </select>
+
+            <select id="filter-stock-flasher" onchange="applyFilters('flasher')">
+                <option value="all">Stock normal</option>
+                <option value="low">Stock bas</option>
+            </select>
+
+            <input type="text" id="filter-search-flasher" placeholder="Recherche code..." oninput="applyFilters('flasher')">
+        </div>
+
         <div class="card-container" id="cards-flasher"></div>
     </section>
 
     <!-- BOUTON -->
     <section id="bouton" class="tab">
         <h2>Bouton</h2>
+        <button class="add-btn" onclick="openAddForm('bouton')">+ Ajouter un article</button>
+
+        <div class="filters">
+            <select id="filter-actif-bouton" onchange="applyFilters('bouton')">
+                <option value="all">Tous</option>
+                <option value="active">Actifs</option>
+                <option value="inactive">Inactifs</option>
+            </select>
+
+            <select id="filter-stock-bouton" onchange="applyFilters('bouton')">
+                <option value="all">Stock normal</option>
+                <option value="low">Stock bas</option>
+            </select>
+
+            <input type="text" id="filter-search-bouton" placeholder="Recherche code..." oninput="applyFilters('bouton')">
+        </div>
+
         <div class="card-container" id="cards-bouton"></div>
     </section>
 
     <!-- RIVET -->
     <section id="rivet" class="tab">
         <h2>Rivet</h2>
+        <button class="add-btn" onclick="openAddForm('rivet')">+ Ajouter un article</button>
+
+        <div class="filters">
+            <select id="filter-actif-rivet" onchange="applyFilters('rivet')">
+                <option value="all">Tous</option>
+                <option value="active">Actifs</option>
+                <option value="inactive">Inactifs</option>
+            </select>
+
+            <select id="filter-stock-rivet" onchange="applyFilters('rivet')">
+                <option value="all">Stock normal</option>
+                <option value="low">Stock bas</option>
+            </select>
+
+            <input type="text" id="filter-search-rivet" placeholder="Recherche code..." oninput="applyFilters('rivet')">
+        </div>
+
         <div class="card-container" id="cards-rivet"></div>
     </section>
 
     <!-- ÉTIQUETTE -->
     <section id="etiquette" class="tab">
         <h2>Étiquette</h2>
+        <button class="add-btn" onclick="openAddForm('etiquette')">+ Ajouter un article</button>
+
+        <div class="filters">
+            <select id="filter-actif-etiquette" onchange="applyFilters('etiquette')">
+                <option value="all">Tous</option>
+                <option value="active">Actifs</option>
+                <option value="inactive">Inactifs</option>
+            </select>
+
+            <select id="filter-stock-etiquette" onchange="applyFilters('etiquette')">
+                <option value="all">Stock normal</option>
+                <option value="low">Stock bas</option>
+            </select>
+
+            <input type="text" id="filter-search-etiquette" placeholder="Recherche code..." oninput="applyFilters('etiquette')">
+        </div>
+
         <div class="card-container" id="cards-etiquette"></div>
     </section>
 
     <!-- PROJETS -->
     <section id="projets" class="tab">
         <h2>Projets</h2>
-        <p>Formulaire + liste des projets à venir ici.</p>
+        <button class="add-btn" onclick="openProjectForm()">+ Nouveau projet</button>
+        <div id="project-list"></div>
     </section>
 
     <!-- MODÈLES -->
     <section id="modeles" class="tab">
         <h2>Modèles</h2>
-        <p>Gestion des modèles (Super Guy, Easy Guy, Arrow, etc.)</p>
+        <button class="add-btn" onclick="addModele()">+ Ajouter un modèle</button>
+        <div id="modeles-list"></div>
     </section>
 
     <!-- MOUVEMENTS -->
     <section id="mouvements" class="tab">
-        <h2>Mouvements</h2>
-        <p>Historique des entrées / sorties / corrections.</p>
+        <h2>Mouvements d’inventaire</h2>
+        <div id="mouvements-list" class="card-container"></div>
     </section>
 
 </div>
 
-<script>
-    // Navigation
-    const buttons = document.querySelectorAll("nav button");
-    const tabs = document.querySelectorAll(".tab");
+<!-- POPUPS -->
+<div id="addForm" class="modal"></div>
+<div id="editForm" class="modal"></div>
+<div id="projectForm" class="modal"></div>
 
-    buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            tabs.forEach(t => t.style.display = "none");
-            document.getElementById(btn.dataset.tab).style.display = "block";
-        });
-    });
+<script src="script.js"></script>
+</body>
+</html>
 
-    // Affiche la première section
-    document.getElementById("tissu").style.display = "block";
+/* ------------------------------ */
+/* GLOBAL */
+/* ------------------------------ */
 
-    // Exemple de données (tu vas entrer les tiennes manuellement)
-    const inventaire = {
-        tissu: [
-            { code: "KV-2200", remarque: "Denim bleu", quantite: 450, unite: "m", min: 200, actif: true },
-            { code: "NF737", remarque: "Selvedge noir", quantite: 80, unite: "m", min: 150, actif: true }
-        ]
-    };
+body {
+    font-family: Arial, sans-serif;
+    background: #F7F7F7;
+    margin: 0;
+    padding: 0;
+}
 
-    function getColorClass(q, min) {
-        if (q <= min) return "stock-low";
-        if (q <= min * 1.5) return "stock-warning";
-        return "stock-ok";
-    }
+/* ------------------------------ */
+/* NAVIGATION */
+/* ------------------------------ */
 
-    function renderCards(type) {
-        const container = document.getElementById("cards-" + type);
-        container.innerHTML = "";
+nav {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #DDD;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
 
-        inventaire[type].forEach(item => {
-            const div = document.createElement("div");
-            div.className = "card " + getColorClass(item.quantite, item.min);
+nav button {
+    padding: 10px 18px;
+    border: none;
+    background: #4A90E2;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+}
 
-            div.innerHTML = `
-                <h3>${item.code}</h3>
-                <div class="info"><strong>Remarque :</strong> ${item.remarque}</div>
-                <div class="info"><strong>Quantité :</strong> ${item.quantite} ${item.unite}</div>
-                <div class="info"><strong>Stock min :</strong> ${item.min}</div>
-                <div class="info"><strong>Actif :</strong> ${item.actif ? "Oui" : "Non"}</div>
+nav button:hover {
+    background: #357ABD;
+}
 
-                <div class="actions">
-                    <button class="edit">Modifier</button>
-                    <button class="inactive">Inactif</button>
-                </div>
-            `;
-            container.appendChild(div);
-        });
-    }
+/* ------------------------------ */
+/* SECTIONS */
+/* ------------------------------ */
 
-   <button class="add-btn" onclick="openAddForm('tissu')">+ Ajouter un article</button>
+.tab {
+    display: none;
+    padding: 20px;
+}
 
-  <div id="addForm" class="modal">
-  <div class="modal-content">
-    <h2 id="form-title">Ajouter un article</h2>
+h2 {
+    margin-top: 0;
+}
 
-    <label>Code</label>
-    <input type="text" id="add-code">
+/* ------------------------------ */
+/* ADD BUTTON */
+/* ------------------------------ */
 
-    <label id="label-extra1">Nom / Remarque</label>
-    <input type="text" id="add-extra1">
-
-    <label id="label-extra2">Couleur / Genre</label>
-    <input type="text" id="add-extra2">
-
-    <label>Quantité</label>
-    <input type="number" id="add-quantite">
-
-    <label>Unité</label>
-    <select id="add-unite">
-      <option value="m">m</option>
-      <option value="yds">yds</option>
-      <option value="pcs">pcs</option>
-    </select>
-
-    <label>Stock minimum</label>
-    <input type="number" id="add-min">
-
-    <label>Actif</label>
-    <select id="add-actif">
-      <option value="true">Oui</option>
-      <option value="false">Non</option>
-    </select>
-
-    <div class="form-actions">
-      <button onclick="saveItem()">Enregistrer</button>
-      <button onclick="closeAddForm()">Annuler</button>
-    </div>
-  </div>
-</div>
-
-  .add-btn {
+.add-btn {
     background: #4A90E2;
     color: white;
     padding: 10px 15px;
@@ -319,14 +258,112 @@ function addItem(type) { /* formulaire d’ajout */ }
     cursor: pointer;
 }
 
+.add-btn:hover {
+    background: #357ABD;
+}
+
+/* ------------------------------ */
+/* FILTERS */
+/* ------------------------------ */
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filters select,
+.filters input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #CCC;
+    background: white;
+}
+
+/* ------------------------------ */
+/* CARDS */
+/* ------------------------------ */
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-left: 10px solid #4A90E2;
+}
+
+.card h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+}
+
+.info {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* ------------------------------ */
+/* STOCK COLORS */
+/* ------------------------------ */
+
+.stock-ok {
+    border-left-color: #4CAF50;
+    background: #DFF6DD;
+}
+
+.stock-warning {
+    border-left-color: #FFC107;
+    background: #FFF4CE;
+}
+
+.stock-low {
+    border-left-color: #F44336;
+    background: #FDE7E9;
+}
+
+/* ------------------------------ */
+/* ACTION BUTTONS */
+/* ------------------------------ */
+
+.actions button {
+    margin-right: 5px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit {
+    background: #4A90E2;
+    color: white;
+}
+
+.inactive {
+    background: #999;
+    color: white;
+}
+
+/* ------------------------------ */
+/* MODALS */
+/* ------------------------------ */
+
 .modal {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
     background: rgba(0,0,0,0.4);
     justify-content: center;
     align-items: center;
+    z-index: 20;
 }
 
 .modal-content {
@@ -358,26 +395,171 @@ function addItem(type) { /* formulaire d’ajout */ }
     justify-content: space-between;
 }
 
-  let currentType = null;
+.form-actions button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.form-actions button:first-child {
+    background: #4A90E2;
+    color: white;
+}
+
+.form-actions button:last-child {
+    background: #999;
+    color: white;
+}
+
+/* --------------------------------------------------------- */
+/*  NAVIGATION ENTRE LES SECTIONS */
+/* --------------------------------------------------------- */
+
+const buttons = document.querySelectorAll("nav button");
+const tabs = document.querySelectorAll(".tab");
+
+buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tabs.forEach(t => t.style.display = "none");
+        document.getElementById(btn.dataset.tab).style.display = "block";
+    });
+});
+
+// Afficher la première section
+document.getElementById("tissu").style.display = "block";
+
+/* --------------------------------------------------------- */
+/*  DONNÉES (INVENTAIRE VIDE) */
+/* --------------------------------------------------------- */
+
+const inventaire = {
+    tissu: [],
+    patch: [],
+    flasher: [],
+    bouton: [],
+    rivet: [],
+    etiquette: []
+};
+
+const projets = [];
+const mouvements = [];
+const modeles = [];
+
+/* --------------------------------------------------------- */
+/*  COULEURS DE STOCK */
+/* --------------------------------------------------------- */
+
+function getColorClass(q, min) {
+    if (q <= min) return "stock-low";
+    if (q <= min * 1.5) return "stock-warning";
+    return "stock-ok";
+}
+
+/* --------------------------------------------------------- */
+/*  AFFICHAGE DES CARTES */
+/* --------------------------------------------------------- */
+
+function renderCards(type) {
+    const container = document.getElementById("cards-" + type);
+    container.innerHTML = "";
+
+    let list = [...inventaire[type]];
+
+    // Filtres
+    const actifFilter = document.getElementById("filter-actif-" + type)?.value;
+    if (actifFilter === "active") list = list.filter(i => i.actif);
+    if (actifFilter === "inactive") list = list.filter(i => !i.actif);
+
+    const stockFilter = document.getElementById("filter-stock-" + type)?.value;
+    if (stockFilter === "low") list = list.filter(i => i.quantite <= i.min);
+
+    const search = document.getElementById("filter-search-" + type)?.value.toLowerCase();
+    if (search) list = list.filter(i => i.code.toLowerCase().includes(search));
+
+    // Affichage
+    list.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "card " + getColorClass(item.quantite, item.min);
+
+        div.innerHTML = `
+            <h3>${item.code}</h3>
+            <div class="info"><strong>Info 1 :</strong> ${item.extra1 || ""}</div>
+            <div class="info"><strong>Info 2 :</strong> ${item.extra2 || ""}</div>
+            <div class="info"><strong>Quantité :</strong> ${item.quantite} ${item.unite}</div>
+            <div class="info"><strong>Stock min :</strong> ${item.min}</div>
+            <div class="info"><strong>Actif :</strong> ${item.actif ? "Oui" : "Non"}</div>
+
+            <div class="actions">
+                <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
+                <button class="inactive" onclick="toggleActive('${type}', ${index})">
+                    ${item.actif ? "Désactiver" : "Activer"}
+                </button>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+/* --------------------------------------------------------- */
+/*  FILTRES */
+/* --------------------------------------------------------- */
+
+function applyFilters(type) {
+    renderCards(type);
+}
+
+/* --------------------------------------------------------- */
+/*  AJOUT D’ARTICLE */
+/* --------------------------------------------------------- */
+
+let currentType = null;
 
 function openAddForm(type) {
     currentType = type;
-    document.getElementById("addForm").style.display = "flex";
 
-    // Adapter les labels selon le type
-    if (type === "tissu") {
-        document.getElementById("label-extra1").innerText = "Remarque";
-        document.getElementById("label-extra2").innerText = "Couleur (optionnel)";
-    } else if (type === "patch") {
-        document.getElementById("label-extra1").innerText = "Genre";
-        document.getElementById("label-extra2").innerText = "Couleur";
-    } else if (type === "flasher") {
-        document.getElementById("label-extra1").innerText = "Nom";
-        document.getElementById("label-extra2").innerText = "Genre";
-    } else {
-        document.getElementById("label-extra1").innerText = "Nom";
-        document.getElementById("label-extra2").innerText = "Couleur";
-    }
+    const form = document.getElementById("addForm");
+    form.innerHTML = `
+        <div class="modal-content">
+            <h2>Ajouter un article (${type})</h2>
+
+            <label>Code</label>
+            <input id="add-code">
+
+            <label id="label-extra1">Info 1</label>
+            <input id="add-extra1">
+
+            <label id="label-extra2">Info 2</label>
+            <input id="add-extra2">
+
+            <label>Quantité</label>
+            <input type="number" id="add-quantite">
+
+            <label>Unité</label>
+            <select id="add-unite">
+                <option value="m">m</option>
+                <option value="yds">yds</option>
+                <option value="pcs">pcs</option>
+            </select>
+
+            <label>Stock minimum</label>
+            <input type="number" id="add-min">
+
+            <label>Actif</label>
+            <select id="add-actif">
+                <option value="true">Oui</option>
+                <option value="false">Non</option>
+            </select>
+
+            <div class="form-actions">
+                <button onclick="saveItem()">Enregistrer</button>
+                <button onclick="closeAddForm()">Annuler</button>
+            </div>
+        </div>
+    `;
+
+    form.style.display = "flex";
 }
 
 function closeAddForm() {
@@ -385,7 +567,7 @@ function closeAddForm() {
 }
 
 function saveItem() {
-    const item = {
+    inventaire[currentType].push({
         code: document.getElementById("add-code").value,
         extra1: document.getElementById("add-extra1").value,
         extra2: document.getElementById("add-extra2").value,
@@ -393,57 +575,17 @@ function saveItem() {
         unite: document.getElementById("add-unite").value,
         min: Number(document.getElementById("add-min").value),
         actif: document.getElementById("add-actif").value === "true"
-    };
+    });
 
-    inventaire[currentType].push(item);
     renderCards(currentType);
     closeAddForm();
 }
 
-  <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
+/* --------------------------------------------------------- */
+/*  MODIFICATION D’ARTICLE */
+/* --------------------------------------------------------- */
 
-  <div id="editForm" class="modal">
-  <div class="modal-content">
-    <h2 id="edit-title">Modifier un article</h2>
-
-    <label>Code</label>
-    <input type="text" id="edit-code">
-
-    <label id="edit-label-extra1">Nom / Remarque</label>
-    <input type="text" id="edit-extra1">
-
-    <label id="edit-label-extra2">Couleur / Genre</label>
-    <input type="text" id="edit-extra2">
-
-    <label>Quantité</label>
-    <input type="number" id="edit-quantite">
-
-    <label>Unité</label>
-    <select id="edit-unite">
-      <option value="m">m</option>
-      <option value="yds">yds</option>
-      <option value="pcs">pcs</option>
-    </select>
-
-    <label>Stock minimum</label>
-    <input type="number" id="edit-min">
-
-    <label>Actif</label>
-    <select id="edit-actif">
-      <option value="true">Oui</option>
-      <option value="false">Non</option>
-    </select>
-
-    <div class="form-actions">
-      <button onclick="saveEdit()">Enregistrer</button>
-      <button onclick="closeEditForm()">Annuler</button>
-    </div>
-  </div>
-</div>
-
-  #editForm { display: none; }
-
-  let editType = null;
+let editType = null;
 let editIndex = null;
 
 function openEditForm(type, index) {
@@ -452,30 +594,50 @@ function openEditForm(type, index) {
 
     const item = inventaire[type][index];
 
-    document.getElementById("edit-code").value = item.code;
-    document.getElementById("edit-extra1").value = item.extra1 || item.remarque || item.nom || "";
-    document.getElementById("edit-extra2").value = item.extra2 || item.couleur || item.genre || "";
-    document.getElementById("edit-quantite").value = item.quantite;
+    const form = document.getElementById("editForm");
+    form.innerHTML = `
+        <div class="modal-content">
+            <h2>Modifier un article (${type})</h2>
+
+            <label>Code</label>
+            <input id="edit-code" value="${item.code}">
+
+            <label>Info 1</label>
+            <input id="edit-extra1" value="${item.extra1 || ""}">
+
+            <label>Info 2</label>
+            <input id="edit-extra2" value="${item.extra2 || ""}">
+
+            <label>Quantité</label>
+            <input type="number" id="edit-quantite" value="${item.quantite}">
+
+            <label>Unité</label>
+            <select id="edit-unite">
+                <option value="m">m</option>
+                <option value="yds">yds</option>
+                <option value="pcs">pcs</option>
+            </select>
+
+            <label>Stock minimum</label>
+            <input type="number" id="edit-min" value="${item.min}">
+
+            <label>Actif</label>
+            <select id="edit-actif">
+                <option value="true">Oui</option>
+                <option value="false">Non</option>
+            </select>
+
+            <div class="form-actions">
+                <button onclick="saveEdit()">Enregistrer</button>
+                <button onclick="closeEditForm()">Annuler</button>
+            </div>
+        </div>
+    `;
+
     document.getElementById("edit-unite").value = item.unite;
-    document.getElementById("edit-min").value = item.min;
     document.getElementById("edit-actif").value = item.actif ? "true" : "false";
 
-    // Adapter les labels selon le type
-    if (type === "tissu") {
-        document.getElementById("edit-label-extra1").innerText = "Remarque";
-        document.getElementById("edit-label-extra2").innerText = "Couleur (optionnel)";
-    } else if (type === "patch") {
-        document.getElementById("edit-label-extra1").innerText = "Genre";
-        document.getElementById("edit-label-extra2").innerText = "Couleur";
-    } else if (type === "flasher") {
-        document.getElementById("edit-label-extra1").innerText = "Nom";
-        document.getElementById("edit-label-extra2").innerText = "Genre";
-    } else {
-        document.getElementById("edit-label-extra1").innerText = "Nom";
-        document.getElementById("edit-label-extra2").innerText = "Couleur";
-    }
-
-    document.getElementById("editForm").style.display = "flex";
+    form.style.display = "flex";
 }
 
 function closeEditForm() {
@@ -497,92 +659,99 @@ function saveEdit() {
     closeEditForm();
 }
 
-  inventaire[type].forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "card " + getColorClass(item.quantite, item.min);
+/* --------------------------------------------------------- */
+/*  ACTIVER / DÉSACTIVER */
+/* --------------------------------------------------------- */
 
-    div.innerHTML = `
-        <h3>${item.code}</h3>
-        <div class="info"><strong>Info 1 :</strong> ${item.extra1 || ""}</div>
-        <div class="info"><strong>Info 2 :</strong> ${item.extra2 || ""}</div>
-        <div class="info"><strong>Quantité :</strong> ${item.quantite} ${item.unite}</div>
-        <div class="info"><strong>Stock min :</strong> ${item.min}</div>
-        <div class="info"><strong>Actif :</strong> ${item.actif ? "Oui" : "Non"}</div>
-
-        <div class="actions">
-            <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
-            <button class="inactive">Inactif</button>
-        </div>
-    `;
-    container.appendChild(div);
-});
-
-  <button class="add-btn" onclick="openProjectForm()">+ Nouveau projet</button>
-<div id="project-list"></div>
-
-  <div id="projectForm" class="modal">
-  <div class="modal-content">
-    <h2>Nouveau projet</h2>
-
-    <label>Client</label>
-    <input type="text" id="proj-client">
-
-    <label>Lot</label>
-    <input type="text" id="proj-lot">
-
-    <label>Modèle</label>
-    <select id="proj-modele"></select>
-
-    <label>Tissu</label>
-    <select id="proj-tissu"></select>
-
-    <label>Patch</label>
-    <select id="proj-patch"></select>
-
-    <label>Flasher</label>
-    <select id="proj-flasher"></select>
-
-    <label>Bouton</label>
-    <select id="proj-bouton"></select>
-
-    <label>Rivet</label>
-    <select id="proj-rivet"></select>
-
-    <label>Étiquette</label>
-    <select id="proj-etiquette"></select>
-
-    <label>Quantité de pièces</label>
-    <input type="number" id="proj-qty" value="1">
-
-    <div class="form-actions">
-      <button onclick="saveProject()">Créer</button>
-      <button onclick="closeProjectForm()">Annuler</button>
-    </div>
-  </div>
-</div>
-
-  #projectForm { display: none; }
-
-  const projets = [];
-
-  {
-  id: Date.now(),
-  client: "...",
-  lot: "...",
-  modele: "...",
-  tissu: "...",
-  patch: "...",
-  flasher: "...",
-  bouton: "...",
-  rivet: "...",
-  etiquette: "...",
-  qty: 10,
-  statut: "En attente",
-  tissuDeduit: false
+function toggleActive(type, index) {
+    inventaire[type][index].actif = !inventaire[type][index].actif;
+    renderCards(type);
 }
 
-  function openProjectForm() {
-    document.getElementById("projectForm").style.display = "flex";
+/* --------------------------------------------------------- */
+/*  MOUVEMENTS */
+/* --------------------------------------------------------- */
+
+function addMouvement(type, categorie, code, quantite, raison, commentaire = "") {
+    mouvements.push({
+        date: new Date().toLocaleString(),
+        type,
+        categorie,
+        article: code,
+        quantite,
+        raison,
+        commentaire
+    });
+
+    renderMouvements();
+}
+
+function renderMouvements() {
+    const div = document.getElementById("mouvements-list");
+    div.innerHTML = "";
+
+    mouvements.slice().reverse().forEach(m => {
+        div.innerHTML += `
+            <div class="card">
+                <h3>${m.type.toUpperCase()}</h3>
+                <div class="info"><strong>Date :</strong> ${m.date}</div>
+                <div class="info"><strong>Article :</strong> ${m.article}</div>
+                <div class="info"><strong>Catégorie :</strong> ${m.categorie}</div>
+                <div class="info"><strong>Quantité :</strong> ${m.quantite}</div>
+                <div class="info"><strong>Raison :</strong> ${m.raison}</div>
+                <div class="info"><strong>Commentaire :</strong> ${m.commentaire}</div>
+            </div>
+        `;
+    });
+}
+
+/* --------------------------------------------------------- */
+/*  PROJETS */
+/* --------------------------------------------------------- */
+
+function openProjectForm() {
+    const form = document.getElementById("projectForm");
+
+    form.innerHTML = `
+        <div class="modal-content">
+            <h2>Nouveau projet</h2>
+
+            <label>Client</label>
+            <input id="proj-client">
+
+            <label>Lot</label>
+            <input id="proj-lot">
+
+            <label>Modèle</label>
+            <select id="proj-modele"></select>
+
+            <label>Tissu</label>
+            <select id="proj-tissu"></select>
+
+            <label>Patch</label>
+            <select id="proj-patch"></select>
+
+            <label>Flasher</label>
+            <select id="proj-flasher"></select>
+
+            <label>Bouton</label>
+            <select id="proj-bouton"></select>
+
+            <label>Rivet</label>
+            <select id="proj-rivet"></select>
+
+            <label>Étiquette</label>
+            <select id="proj-etiquette"></select>
+
+            <label>Quantité de pièces</label>
+            <input type="number" id="proj-qty" value="1">
+
+            <div class="form-actions">
+                <button onclick="saveProject()">Créer</button>
+                <button onclick="closeProjectForm()">Annuler</button>
+            </div>
+        </div>
+    `;
 
     fillSelect("proj-modele", modeles);
     fillSelect("proj-tissu", inventaire.tissu);
@@ -591,6 +760,8 @@ function saveEdit() {
     fillSelect("proj-bouton", inventaire.bouton);
     fillSelect("proj-rivet", inventaire.rivet);
     fillSelect("proj-etiquette", inventaire.etiquette);
+
+    form.style.display = "flex";
 }
 
 function closeProjectForm() {
@@ -605,7 +776,7 @@ function fillSelect(id, list) {
     });
 }
 
-  function saveProject() {
+function saveProject() {
     const p = {
         id: Date.now(),
         client: document.getElementById("proj-client").value,
@@ -624,7 +795,7 @@ function fillSelect(id, list) {
 
     projets.push(p);
 
-    // Déduction immédiate (sauf tissu)
+    // Déductions automatiques (sauf tissu)
     deductItem("patch", p.patch, p.qty);
     deductItem("flasher", p.flasher, p.qty);
     deductItem("bouton", p.bouton, p.qty);
@@ -643,15 +814,37 @@ function fillSelect(id, list) {
 
 function deductItem(type, code, qty) {
     const item = inventaire[type].find(i => i.code === code);
-    if (item) item.quantite -= qty;
+    if (item) {
+        item.quantite -= qty;
+
+        addMouvement(
+            "sortie",
+            type,
+            code,
+            qty,
+            "Projet (création)",
+            "Déduction automatique"
+        );
+    }
 }
 
-  function startProduction(id) {
+function startProduction(id) {
     const p = projets.find(x => x.id === id);
     if (!p || p.tissuDeduit) return;
 
     const tissu = inventaire.tissu.find(t => t.code === p.tissu);
-    if (tissu) tissu.quantite -= p.qty;
+    if (tissu) {
+        tissu.quantite -= p.qty;
+
+        addMouvement(
+            "sortie",
+            "tissu",
+            p.tissu,
+            p.qty,
+            "Projet (production)",
+            "Déduction tissu"
+        );
+    }
 
     p.tissuDeduit = true;
     p.statut = "En production";
@@ -660,7 +853,7 @@ function deductItem(type, code, qty) {
     renderProjectList();
 }
 
-  function renderProjectList() {
+function renderProjectList() {
     const div = document.getElementById("project-list");
     div.innerHTML = "";
 
@@ -675,6 +868,31 @@ function deductItem(type, code, qty) {
                 <div class="actions">
                     <button class="edit" onclick="startProduction(${p.id})">Production</button>
                 </div>
+            </div>
+        `;
+    });
+}
+
+/* --------------------------------------------------------- */
+/*  MODÈLES */
+/* --------------------------------------------------------- */
+
+function addModele() {
+    const nom = prompt("Nom du modèle :");
+    if (!nom) return;
+
+    modeles.push({ code: nom });
+    renderModeles();
+}
+
+function renderModeles() {
+    const div = document.getElementById("modeles-list");
+    div.innerHTML = "";
+
+    modeles.forEach(m => {
+        div.innerHTML += `
+            <div class="card">
+                <h3>${m.code}</h3>
             </div>
         `;
     });
