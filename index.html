@@ -399,3 +399,122 @@ function saveItem() {
     renderCards(currentType);
     closeAddForm();
 }
+
+  <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
+
+  <div id="editForm" class="modal">
+  <div class="modal-content">
+    <h2 id="edit-title">Modifier un article</h2>
+
+    <label>Code</label>
+    <input type="text" id="edit-code">
+
+    <label id="edit-label-extra1">Nom / Remarque</label>
+    <input type="text" id="edit-extra1">
+
+    <label id="edit-label-extra2">Couleur / Genre</label>
+    <input type="text" id="edit-extra2">
+
+    <label>Quantité</label>
+    <input type="number" id="edit-quantite">
+
+    <label>Unité</label>
+    <select id="edit-unite">
+      <option value="m">m</option>
+      <option value="yds">yds</option>
+      <option value="pcs">pcs</option>
+    </select>
+
+    <label>Stock minimum</label>
+    <input type="number" id="edit-min">
+
+    <label>Actif</label>
+    <select id="edit-actif">
+      <option value="true">Oui</option>
+      <option value="false">Non</option>
+    </select>
+
+    <div class="form-actions">
+      <button onclick="saveEdit()">Enregistrer</button>
+      <button onclick="closeEditForm()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+  #editForm { display: none; }
+
+  let editType = null;
+let editIndex = null;
+
+function openEditForm(type, index) {
+    editType = type;
+    editIndex = index;
+
+    const item = inventaire[type][index];
+
+    document.getElementById("edit-code").value = item.code;
+    document.getElementById("edit-extra1").value = item.extra1 || item.remarque || item.nom || "";
+    document.getElementById("edit-extra2").value = item.extra2 || item.couleur || item.genre || "";
+    document.getElementById("edit-quantite").value = item.quantite;
+    document.getElementById("edit-unite").value = item.unite;
+    document.getElementById("edit-min").value = item.min;
+    document.getElementById("edit-actif").value = item.actif ? "true" : "false";
+
+    // Adapter les labels selon le type
+    if (type === "tissu") {
+        document.getElementById("edit-label-extra1").innerText = "Remarque";
+        document.getElementById("edit-label-extra2").innerText = "Couleur (optionnel)";
+    } else if (type === "patch") {
+        document.getElementById("edit-label-extra1").innerText = "Genre";
+        document.getElementById("edit-label-extra2").innerText = "Couleur";
+    } else if (type === "flasher") {
+        document.getElementById("edit-label-extra1").innerText = "Nom";
+        document.getElementById("edit-label-extra2").innerText = "Genre";
+    } else {
+        document.getElementById("edit-label-extra1").innerText = "Nom";
+        document.getElementById("edit-label-extra2").innerText = "Couleur";
+    }
+
+    document.getElementById("editForm").style.display = "flex";
+}
+
+function closeEditForm() {
+    document.getElementById("editForm").style.display = "none";
+}
+
+function saveEdit() {
+    const item = inventaire[editType][editIndex];
+
+    item.code = document.getElementById("edit-code").value;
+    item.extra1 = document.getElementById("edit-extra1").value;
+    item.extra2 = document.getElementById("edit-extra2").value;
+    item.quantite = Number(document.getElementById("edit-quantite").value);
+    item.unite = document.getElementById("edit-unite").value;
+    item.min = Number(document.getElementById("edit-min").value);
+    item.actif = document.getElementById("edit-actif").value === "true";
+
+    renderCards(editType);
+    closeEditForm();
+}
+
+  inventaire[type].forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "card " + getColorClass(item.quantite, item.min);
+
+    div.innerHTML = `
+        <h3>${item.code}</h3>
+        <div class="info"><strong>Info 1 :</strong> ${item.extra1 || ""}</div>
+        <div class="info"><strong>Info 2 :</strong> ${item.extra2 || ""}</div>
+        <div class="info"><strong>Quantité :</strong> ${item.quantite} ${item.unite}</div>
+        <div class="info"><strong>Stock min :</strong> ${item.min}</div>
+        <div class="info"><strong>Actif :</strong> ${item.actif ? "Oui" : "Non"}</div>
+
+        <div class="actions">
+            <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
+            <button class="inactive">Inactif</button>
+        </div>
+    `;
+    container.appendChild(div);
+});
+
+  
