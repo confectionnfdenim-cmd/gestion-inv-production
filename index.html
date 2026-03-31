@@ -168,11 +168,11 @@
     </section>
 
     <!-- PROJETS -->
-    <section id="projets" class="tab">
-        <h2>Projets</h2>
-        <button onclick="openProjectForm()">Nouveau projet</button>
-        <div id="project-list"></div>
-    </section>
+<section identifiant=projets classe=languette>
+    <h2>Projets</h2>
+    <bouton clic=ouvrirProjectFormulaire()>Nouveau projet</bouton>
+    <div identifiant=liste de projets></div>
+</section>
 
     <!-- MODÈLES -->
     <section id="modeles" class="tab">
@@ -199,3 +199,58 @@
 </html>
 
 <script src="script.js"></script>
+
+function openProjectForm() {
+    const form = document.getElementById("projectForm");
+
+    form.innerHTML = `
+        <div class="modal-content">
+            <h2>Nouveau projet</h2>
+
+            <label>Client</label>
+            <input id="proj-client">
+
+            <label>Lot</label>
+            <input id="proj-lot">
+
+            <label>Modèle</label>
+            <select id="proj-modele"></select>
+
+            <label>Tissu</label>
+            <select id="proj-tissu"></select>
+
+            <label>Patch</label>
+            <select id="proj-patch"></select>
+
+            <label>Flasher</label>
+            <select id="proj-flasher"></select>
+
+            <label>Bouton</label>
+            <select id="proj-bouton"></select>
+
+            <label>Rivet</label>
+            <select id="proj-rivet"></select>
+
+            <label>Étiquette</label>
+            <select id="proj-etiquette"></select>
+
+            <label>Quantité de pièces</label>
+            <input type="number" id="proj-qty" value="1">
+
+            <div class="form-actions">
+                <button onclick="saveProject()">Créer</button>
+                <button onclick="closeProjectForm()">Annuler</button>
+            </div>
+        </div>
+    `;
+
+    fillSelect("proj-modele", modeles);
+    fillSelect("proj-tissu", inventaire.tissu);
+    fillSelect("proj-patch", inventaire.patch);
+    fillSelect("proj-flasher", inventaire.flasher);
+    fillSelect("proj-bouton", inventaire.bouton);
+    fillSelect("proj-rivet", inventaire.rivet);
+    fillSelect("proj-etiquette", inventaire.etiquette);
+
+    form.style.display = "flex";
+}
