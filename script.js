@@ -197,7 +197,6 @@ function saveItem() {
     closeAddForm();
     
 }
-div.innerHTML += `
     <div class="card">
         <h3>Projet ${p.lot}</h3>
 
