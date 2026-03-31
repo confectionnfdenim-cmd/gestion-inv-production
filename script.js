@@ -45,8 +45,7 @@ const tabs = document.querySelectorAll(".tab");
 
 buttons.forEach(btn => {
     btn.addEventListener("click", () => {
-        tabs.forEach(t => t.style.display = "none";
-        );
+        tabs.forEach(t => t.style.display = "none");
         document.getElementById(btn.dataset.tab).style.display = "block";
 
         if (btn.dataset.tab === "dashboard") renderDashboard();
