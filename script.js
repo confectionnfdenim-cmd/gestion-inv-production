@@ -93,7 +93,7 @@ function renderCards(type) {
         const div = document.createElement("div");
         div.className = "card " + getColorClass(item.quantite, item.min);
 
-        div.innerHTML = m.nom;
+        div.innerHTML = `
             <h3>${item.code}</h3>
             <div class="info"><strong>Info 1 :</strong> ${item.extra1 || ""}</div>
             <div class="info"><strong>Info 2 :</strong> ${item.extra2 || ""}</div>
@@ -440,7 +440,7 @@ function fillSelect(id, list) {
     list.forEach(item => {
         const opt = document.createElement("option");
         opt.value = item.code;
-        opt.textContent = item.nom; 
+        opt.textContent = item.code;
         sel.appendChild(opt);
     });
 }
@@ -538,97 +538,10 @@ function setStatus(id, statut) {
 function renderProjectList() {
     const div = document.getElementById("project-list");
     if (!div) return;
-    div.innerHTML += m.nom;
+    div.innerHTML = "";
 
     projets.forEach(p => {
-        div.innerHTML += m.nom;
-            <div class="card">
-                <h3>Projet ${p.lot}</h3>
-                <div class="info"><strong>Client :</strong> ${p.client}</div>
-                <div class="info"><strong>Modèle :</strong> ${p.modele}</div>
-                <div class="info"><strong>Statut :</strong> ${p.statut}</div>
-
-                <div class="actions">
-                    <button onclick="startProduction(${p.id})">Production</button>
-                    <button onclick="setStatus(${p.id}, 'Non approuvé')">Non approuvé</button>
-                    <button onclick="setStatus(${p.id}, 'Manque de tissu')">Manque de tissu</button>
-                    <button onclick="setStatus(${p.id}, 'Facturation')">Facturation</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-/* --------------------------------------------------------- */
-/*  MODÈLES */
-/* --------------------------------------------------------- */
-
-function addModele() {
-    const nom = prompt("Nom du modèle :");
-    if (!nom) return;
-
-    modeles.push({ code: nom });
-    renderModeles();
-    saveAll();
-}
-
-function renderModeles() {
-    const div = document.getElementById("modeles-list");
-    if (!div) return;
-    div.innerHTML = "";
-
-    modeles.forEach(m => {
         div.innerHTML += `
             <div class="card">
-                <h3>${m.code}</h3>
-            </div>
-        `;
-    });
-}
-
-/* --------------------------------------------------------- */
-/*  DASHBOARD */
-/* --------------------------------------------------------- */
-
-function renderDashboard() {
-    const div = document.getElementById("dashboard-content");
-    if (!div) return;
-    div.innerHTML = "";
-
-    const stockCritique = [];
-    Object.keys(inventaire).forEach(type => {
-        inventaire[type].forEach(item => {
-            if (item.quantite <= item.min) stockCritique.push(item);
-        });
-    });
-
-    const projetsAttente = projets.filter(p => p.statut === "En attente");
-    const projetsManque = projets.filter(p => p.statut === "Manque de tissu");
-
-    div.innerHTML += `
-        <div class="card stock-low">
-            <h3>Stock critique</h3>
-            <p>${stockCritique.length} articles</p>
-        </div>
-
-        <div class="card stock-warning">
-            <h3>Projets en attente</h3>
-            <p>${projetsAttente.length} projets</p>
-        </div>
-
-        <div class="card stock-low">
-            <h3>Projets en manque de tissu</h3>
-            <p>${projetsManque.length} projets</p>
-        </div>
-    `;
-}
-
-/* --------------------------------------------------------- */
-/*  INITIALISATION VISUELLE */
-/* --------------------------------------------------------- */
-
-["tissu","patch","flasher","bouton","rivet","etiquette"].forEach(renderCards);
-renderProjectList();
-renderModeles();
-renderMouvements();
-renderDashboard();
+                <h3>Projet ${p.lot}</h3>
+                <div class="info"><strong
