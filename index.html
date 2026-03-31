@@ -1,3 +1,33 @@
+const inventaire = { ... };
+const projets = [];
+const mouvements = [];
+const modeles = [];
+
+/* --------------------------------------------------------- */
+/*  SAUVEGARDE AUTOMATIQUE LOCALE */
+/* --------------------------------------------------------- */
+
+function saveAll() {
+    localStorage.setItem("inventaire", JSON.stringify(inventaire));
+    localStorage.setItem("projets", JSON.stringify(projets));
+    localStorage.setItem("mouvements", JSON.stringify(mouvements));
+    localStorage.setItem("modeles", JSON.stringify(modeles));
+}
+
+function loadAll() {
+    const inv = localStorage.getItem("inventaire");
+    const proj = localStorage.getItem("projets");
+    const mouv = localStorage.getItem("mouvements");
+    const mod = localStorage.getItem("modeles");
+
+    if (inv) Object.assign(inventaire, JSON.parse(inv));
+    if (proj) projets.push(...JSON.parse(proj));
+    if (mouv) mouvements.push(...JSON.parse(mouv));
+    if (mod) modeles.push(...JSON.parse(mod));
+}
+
+loadAll();
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -508,6 +538,7 @@ function renderCards(type) {
 
 function applyFilters(type) {
     renderCards(type);
+        saveAll();
 }
 
 /* --------------------------------------------------------- */
@@ -578,6 +609,7 @@ function saveItem() {
     });
 
     renderCards(currentType);
+        saveAll();
     closeAddForm();
 }
 
@@ -656,7 +688,9 @@ function saveEdit() {
     item.actif = document.getElementById("edit-actif").value === "true";
 
     renderCards(editType);
+        saveAll();
     closeEditForm();
+        saveAll();
 }
 
 /* --------------------------------------------------------- */
@@ -666,6 +700,7 @@ function saveEdit() {
 function toggleActive(type, index) {
     inventaire[type][index].actif = !inventaire[type][index].actif;
     renderCards(type);
+saveAll();
 }
 
 /* --------------------------------------------------------- */
@@ -809,7 +844,9 @@ function saveProject() {
     renderCards("etiquette");
 
     renderProjectList();
+        saveAll();
     closeProjectForm();
+        saveAll();
 }
 
 function deductItem(type, code, qty) {
@@ -851,6 +888,7 @@ function startProduction(id) {
 
     renderCards("tissu");
     renderProjectList();
+        saveAll();
 }
 
 function renderProjectList() {
