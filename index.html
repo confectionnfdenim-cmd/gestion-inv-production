@@ -268,8 +268,134 @@ function addItem(type) { /* formulaire d’ajout */ }
         });
     }
 
-    renderCards("tissu");
-</script>
+   <button class="add-btn" onclick="openAddForm('tissu')">+ Ajouter un article</button>
 
-</body>
-</html>
+  <div id="addForm" class="modal">
+  <div class="modal-content">
+    <h2 id="form-title">Ajouter un article</h2>
+
+    <label>Code</label>
+    <input type="text" id="add-code">
+
+    <label id="label-extra1">Nom / Remarque</label>
+    <input type="text" id="add-extra1">
+
+    <label id="label-extra2">Couleur / Genre</label>
+    <input type="text" id="add-extra2">
+
+    <label>Quantité</label>
+    <input type="number" id="add-quantite">
+
+    <label>Unité</label>
+    <select id="add-unite">
+      <option value="m">m</option>
+      <option value="yds">yds</option>
+      <option value="pcs">pcs</option>
+    </select>
+
+    <label>Stock minimum</label>
+    <input type="number" id="add-min">
+
+    <label>Actif</label>
+    <select id="add-actif">
+      <option value="true">Oui</option>
+      <option value="false">Non</option>
+    </select>
+
+    <div class="form-actions">
+      <button onclick="saveItem()">Enregistrer</button>
+      <button onclick="closeAddForm()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+  .add-btn {
+    background: #4A90E2;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #CCC;
+}
+
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+  let currentType = null;
+
+function openAddForm(type) {
+    currentType = type;
+    document.getElementById("addForm").style.display = "flex";
+
+    // Adapter les labels selon le type
+    if (type === "tissu") {
+        document.getElementById("label-extra1").innerText = "Remarque";
+        document.getElementById("label-extra2").innerText = "Couleur (optionnel)";
+    } else if (type === "patch") {
+        document.getElementById("label-extra1").innerText = "Genre";
+        document.getElementById("label-extra2").innerText = "Couleur";
+    } else if (type === "flasher") {
+        document.getElementById("label-extra1").innerText = "Nom";
+        document.getElementById("label-extra2").innerText = "Genre";
+    } else {
+        document.getElementById("label-extra1").innerText = "Nom";
+        document.getElementById("label-extra2").innerText = "Couleur";
+    }
+}
+
+function closeAddForm() {
+    document.getElementById("addForm").style.display = "none";
+}
+
+function saveItem() {
+    const item = {
+        code: document.getElementById("add-code").value,
+        extra1: document.getElementById("add-extra1").value,
+        extra2: document.getElementById("add-extra2").value,
+        quantite: Number(document.getElementById("add-quantite").value),
+        unite: document.getElementById("add-unite").value,
+        min: Number(document.getElementById("add-min").value),
+        actif: document.getElementById("add-actif").value === "true"
+    };
+
+    inventaire[currentType].push(item);
+    renderCards(currentType);
+    closeAddForm();
+}
