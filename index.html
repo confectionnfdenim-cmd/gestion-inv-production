@@ -517,4 +517,165 @@ function saveEdit() {
     container.appendChild(div);
 });
 
-  
+  <button class="add-btn" onclick="openProjectForm()">+ Nouveau projet</button>
+<div id="project-list"></div>
+
+  <div id="projectForm" class="modal">
+  <div class="modal-content">
+    <h2>Nouveau projet</h2>
+
+    <label>Client</label>
+    <input type="text" id="proj-client">
+
+    <label>Lot</label>
+    <input type="text" id="proj-lot">
+
+    <label>Modèle</label>
+    <select id="proj-modele"></select>
+
+    <label>Tissu</label>
+    <select id="proj-tissu"></select>
+
+    <label>Patch</label>
+    <select id="proj-patch"></select>
+
+    <label>Flasher</label>
+    <select id="proj-flasher"></select>
+
+    <label>Bouton</label>
+    <select id="proj-bouton"></select>
+
+    <label>Rivet</label>
+    <select id="proj-rivet"></select>
+
+    <label>Étiquette</label>
+    <select id="proj-etiquette"></select>
+
+    <label>Quantité de pièces</label>
+    <input type="number" id="proj-qty" value="1">
+
+    <div class="form-actions">
+      <button onclick="saveProject()">Créer</button>
+      <button onclick="closeProjectForm()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+  #projectForm { display: none; }
+
+  const projets = [];
+
+  {
+  id: Date.now(),
+  client: "...",
+  lot: "...",
+  modele: "...",
+  tissu: "...",
+  patch: "...",
+  flasher: "...",
+  bouton: "...",
+  rivet: "...",
+  etiquette: "...",
+  qty: 10,
+  statut: "En attente",
+  tissuDeduit: false
+}
+
+  function openProjectForm() {
+    document.getElementById("projectForm").style.display = "flex";
+
+    fillSelect("proj-modele", modeles);
+    fillSelect("proj-tissu", inventaire.tissu);
+    fillSelect("proj-patch", inventaire.patch);
+    fillSelect("proj-flasher", inventaire.flasher);
+    fillSelect("proj-bouton", inventaire.bouton);
+    fillSelect("proj-rivet", inventaire.rivet);
+    fillSelect("proj-etiquette", inventaire.etiquette);
+}
+
+function closeProjectForm() {
+    document.getElementById("projectForm").style.display = "none";
+}
+
+function fillSelect(id, list) {
+    const sel = document.getElementById(id);
+    sel.innerHTML = "";
+    list.forEach(item => {
+        sel.innerHTML += `<option value="${item.code}">${item.code}</option>`;
+    });
+}
+
+  function saveProject() {
+    const p = {
+        id: Date.now(),
+        client: document.getElementById("proj-client").value,
+        lot: document.getElementById("proj-lot").value,
+        modele: document.getElementById("proj-modele").value,
+        tissu: document.getElementById("proj-tissu").value,
+        patch: document.getElementById("proj-patch").value,
+        flasher: document.getElementById("proj-flasher").value,
+        bouton: document.getElementById("proj-bouton").value,
+        rivet: document.getElementById("proj-rivet").value,
+        etiquette: document.getElementById("proj-etiquette").value,
+        qty: Number(document.getElementById("proj-qty").value),
+        statut: "En attente",
+        tissuDeduit: false
+    };
+
+    projets.push(p);
+
+    // Déduction immédiate (sauf tissu)
+    deductItem("patch", p.patch, p.qty);
+    deductItem("flasher", p.flasher, p.qty);
+    deductItem("bouton", p.bouton, p.qty);
+    deductItem("rivet", p.rivet, p.qty);
+    deductItem("etiquette", p.etiquette, p.qty);
+
+    renderCards("patch");
+    renderCards("flasher");
+    renderCards("bouton");
+    renderCards("rivet");
+    renderCards("etiquette");
+
+    renderProjectList();
+    closeProjectForm();
+}
+
+function deductItem(type, code, qty) {
+    const item = inventaire[type].find(i => i.code === code);
+    if (item) item.quantite -= qty;
+}
+
+  function startProduction(id) {
+    const p = projets.find(x => x.id === id);
+    if (!p || p.tissuDeduit) return;
+
+    const tissu = inventaire.tissu.find(t => t.code === p.tissu);
+    if (tissu) tissu.quantite -= p.qty;
+
+    p.tissuDeduit = true;
+    p.statut = "En production";
+
+    renderCards("tissu");
+    renderProjectList();
+}
+
+  function renderProjectList() {
+    const div = document.getElementById("project-list");
+    div.innerHTML = "";
+
+    projets.forEach(p => {
+        div.innerHTML += `
+            <div class="card">
+                <h3>Projet ${p.lot}</h3>
+                <div class="info"><strong>Client :</strong> ${p.client}</div>
+                <div class="info"><strong>Modèle :</strong> ${p.modele}</div>
+                <div class="info"><strong>Statut :</strong> ${p.statut}</div>
+
+                <div class="actions">
+                    <button class="edit" onclick="startProduction(${p.id})">Production</button>
+                </div>
+            </div>
+        `;
+    });
+}
