@@ -195,21 +195,27 @@ function saveItem() {
     renderDashboard();
     saveAll();
     closeAddForm();
+    
 }
-                <div class="info"><strong>Client :</strong> ${p.client}</div>
-                <div class="info"><strong>Modèle :</strong> ${p.modele}</div>
-                <div class="info"><strong>Tissu :</strong> ${p.tissu}</div>
-                <div class="info"><strong>Quantité :</strong> ${p.qty}</div>
-                <div class="info"><strong>Statut :</strong> ${p.statut}</div>
+div.innerHTML += `
+    <div class="card">
+        <h3>Projet ${p.lot}</h3>
 
-                <div class="actions">
-                    <button onclick="startProduction(${p.id})">Déduire tissu</button>
-                    <button onclick="setStatus(${p.id}, 'En attente')">En attente</button>
-                    <button onclick="setStatus(${p.id}, 'En production')">En production</button>
-                    <button onclick="setStatus(${p.id}, 'Terminé')">Terminé</button>
-                </div>
-            </div>
-        `;
+        <div class="info"><strong>Client :</strong> ${p.client}</div>
+        <div class="info"><strong>Modèle :</strong> ${p.modele}</div>
+        <div class="info"><strong>Tissu :</strong> ${p.tissu}</div>
+        <div class="info"><strong>Quantité :</strong> ${p.qty}</div>
+        <div class="info"><strong>Statut :</strong> ${p.statut}</div>
+
+        <div class="actions">
+            <button onclick="startProduction(${p.id})">Déduire tissu</button>
+            <button onclick="setStatus(${p.id}, 'En attente')">En attente</button>
+            <button onclick="setStatus(${p.id}, 'En production')">En production</button>
+            <button onclick="setStatus(${p.id}, 'Terminé')">Terminé</button>
+        </div>
+    </div>
+`;
+
     });
 }
 
