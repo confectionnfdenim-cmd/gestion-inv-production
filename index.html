@@ -1,3 +1,4 @@
+
 const inventaire = { ... };
 const projets = [];
 const mouvements = [];
@@ -37,7 +38,10 @@ loadAll();
 </head>
 
 <body>
-
+<section id="dashboard" class="tab">
+    <h2>Tableau de bord</h2>
+    <div id="dashboard-content" class="card-container"></div>
+</section>
 <nav>
     <button data-tab="tissu">Tissu</button>
     <button data-tab="patch">Patch</button>
@@ -260,6 +264,9 @@ nav button {
 nav button:hover {
     background: #357ABD;
 }
+<button data-tab="dashboard">Dashboard</button>
+
+renderDashboard();
 
 /* ------------------------------ */
 /* SECTIONS */
@@ -521,9 +528,14 @@ function renderCards(type) {
             <div class="info"><strong>Actif :</strong> ${item.actif ? "Oui" : "Non"}</div>
 
             <div class="actions">
-                <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
-                <button class="inactive" onclick="toggleActive('${type}', ${index})">
-                    ${item.actif ? "Désactiver" : "Activer"}
+    <button class="edit" onclick="openEditForm('${type}', ${index})">Modifier</button>
+    <button class="inactive" onclick="toggleActive('${type}', ${index})">
+        ${item.actif ? "Désactiver" : "Activer"}
+    </button>
+    <button onclick="openReceiveForm('${type}', ${index})">Recevoir</button>
+    <button onclick="openShipForm('${type}', ${index})">Expédier</button>
+    <button onclick="openCorrectForm('${type}', ${index})">Corriger</button>
+</div>
                 </button>
             </div>
         `;
@@ -691,6 +703,45 @@ function saveEdit() {
         saveAll();
     closeEditForm();
         saveAll();
+}/* --------------------------------------------------------- */
+/*  FORMULAIRES RECEVOIR / EXPÉDIER / CORRIGER */
+/* --------------------------------------------------------- */
+
+function openReceiveForm(type, index) {
+    const item = inventaire[type][index];
+    const qty = prompt(`Quantité à RECEVOIR pour ${item.code} :`);
+    if (!qty) return;
+
+    item.quantite += Number(qty);
+
+    addMouvement("entrée", type, item.code, Number(qty), "Réception", "");
+    renderCards(type);
+    saveAll();
+}
+
+function openShipForm(type, index) {
+    const item = inventaire[type][index];
+    const qty = prompt(`Quantité à EXPÉDIER pour ${item.code} :`);
+    if (!qty) return;
+
+    item.quantite -= Number(qty);
+
+    addMouvement("sortie", type, item.code, Number(qty), "Expédition", "");
+    renderCards(type);
+    saveAll();
+}
+
+function openCorrectForm(type, index) {
+    const item = inventaire[type][index];
+    const qty = prompt(`Nouvelle quantité pour ${item.code} :`);
+    if (qty === null) return;
+
+    const diff = Number(qty) - item.quantite;
+    item.quantite = Number(qty);
+
+    addMouvement(diff > 0 ? "entrée" : "sortie", type, item.code, Math.abs(diff), "Correction", "");
+    renderCards(type);
+    saveAll();
 }
 
 /* --------------------------------------------------------- */
@@ -904,7 +955,19 @@ function renderProjectList() {
                 <div class="info"><strong>Statut :</strong> ${p.statut}</div>
 
                 <div class="actions">
-                    <button class="edit" onclick="startProduction(${p.id})">Production</button>
+    <button onclick="startProduction(${p.id})">Production</button>
+    <button onclick="setStatus(${p.id}, 'Non approuvé')">Non approuvé</button>
+    <button onclick="setStatus(${p.id}, 'Manque de tissu')">Manque de tissu</button>
+    <button onclick="setStatus(${p.id}, 'Facturation')">Facturation</button>
+</div>
+    function setStatus(id, statut) {
+    const p = projets.find(x => x.id === id);
+    if (!p) return;
+
+    p.statut = statut;
+    renderProjectList();
+    saveAll();
+}    
                 </div>
             </div>
         `;
@@ -934,4 +997,35 @@ function renderModeles() {
             </div>
         `;
     });
+}
+        function renderDashboard() {
+    const div = document.getElementById("dashboard-content");
+    div.innerHTML = "";
+
+    const stockCritique = [];
+    Object.keys(inventaire).forEach(type => {
+        inventaire[type].forEach(item => {
+            if (item.quantite <= item.min) stockCritique.push(item);
+        });
+    });
+
+    const projetsAttente = projets.filter(p => p.statut === "En attente");
+    const projetsManque = projets.filter(p => p.statut === "Manque de tissu");
+
+    div.innerHTML += `
+        <div class="card stock-low">
+            <h3>Stock critique</h3>
+            <p>${stockCritique.length} articles</p>
+        </div>
+
+        <div class="card stock-warning">
+            <h3>Projets en attente</h3>
+            <p>${projetsAttente.length} projets</p>
+        </div>
+
+        <div class="card stock-low">
+            <h3>Projets en manque de tissu</h3>
+            <p>${projetsManque.length} projets</p>
+        </div>
+    `;
 }
