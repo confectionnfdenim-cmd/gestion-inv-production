@@ -2,31 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gestion Inventaire N&F</title>
+    <title>Gestion Inventaire & Production</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<nav>
-    <button data-tab="dashboard">Dashboard</button>
-    <button data-tab="tissu">Tissu</button>
-    <button data-tab="patch">Patch</button>
-    <button data-tab="flasher">Flasher</button>
-    <button data-tab="bouton">Bouton</button>
-    <button data-tab="rivet">Rivet</button>
-    <button data-tab="etiquette">Étiquette</button>
-    <button data-tab="projets">Projets</button>
-    <button data-tab="modeles">Modèles</button>
-    <button data-tab="mouvements">Mouvements</button>
-</nav>
+<div id="app">
 
-<div id="content">
+    <!-- NAVIGATION -->
+    <nav>
+        <button data-tab="dashboard">Dashboard</button>
+        <button data-tab="tissu">Tissu</button>
+        <button data-tab="patch">Patch</button>
+        <button data-tab="flasher">Flasher</button>
+        <button data-tab="bouton">Bouton</button>
+        <button data-tab="rivet">Rivet</button>
+        <button data-tab="etiquette">Étiquette</button>
+        <button data-tab="projets">Projets</button>
+        <button data-tab="modeles">Modèles</button>
+        <button data-tab="mouvements">Mouvements</button>
+    </nav>
 
     <!-- DASHBOARD -->
     <section id="dashboard" class="tab">
-        <h2>Tableau de bord</h2>
-        <div id="dashboard-content" class="card-container"></div>
+        <h2>Dashboard</h2>
+        <div id="dashboard-cards" class="card-container"></div>
     </section>
 
     <!-- TISSU -->
@@ -167,14 +168,12 @@
         <div class="card-container" id="cards-etiquette"></div>
     </section>
 
-<!-- PROJETS -->
-<section id="projets" class="tab">
-    <h2>Projets</h2>
-
-    <button onclick="openProjectForm()">Nouveau projet</button>
-
-    <div id="project-list"></div>
-</section>
+    <!-- PROJETS -->
+    <section id="projets" class="tab">
+        <h2>Projets</h2>
+        <button onclick="openProjectForm()">Nouveau projet</button>
+        <div id="project-list"></div>
+    </section>
 
     <!-- MODÈLES -->
     <section id="modeles" class="tab">
@@ -191,16 +190,15 @@
 
 </div>
 
-<!-- POPUPS (contenu généré en JS) -->
+<!-- POPUPS -->
 <div id="addForm" class="modal"></div>
 <div id="editForm" class="modal"></div>
 <div id="projectForm" class="modal"></div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
-
-<script src="script.js"></script>
 
 function openProjectForm() {
     const form = document.getElementById("projectForm");
