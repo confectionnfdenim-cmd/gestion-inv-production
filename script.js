@@ -196,8 +196,7 @@ function saveItem() {
     saveAll();
     closeAddForm();
     
-}
-div.innerHTML += `
+}div.innerHTML += `
     <div class="card">
         <h3>Projet ${p.lot}</h3>
 
@@ -215,8 +214,6 @@ div.innerHTML += `
         </div>
     </div>
 `;
-
-);
 }
 
 /* --------------------------------------------------------- */
